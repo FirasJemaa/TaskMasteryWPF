@@ -5,7 +5,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media;
 using System.Transactions;
 
-namespace TaskMastery.Log.Components
+namespace TaskMastery.Assets.Components
 {
     /// <summary>
     /// Logique d'interaction pour InscriptionUserControl.xaml

@@ -1,6 +1,8 @@
-﻿using System.Windows.Controls;
+﻿using Mysqlx.Prepare;
+using System.Windows;
+using System.Windows.Controls;
 
-namespace TaskMastery.Log.Components
+namespace TaskMastery.Assets.Components
 {
     /// <summary>
     /// Logique d'interaction pour ConnexionUserControl.xaml

@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using MySql.Data.MySqlClient;
 using System.Data;
 
-namespace TaskMastery.Log
+namespace TaskMastery.Assets
 {
     /// <summary>
     /// Logique d'interaction pour SignUpSignInView.xaml
@@ -16,7 +16,7 @@ namespace TaskMastery.Log
         //MySqlConnection permet de se connecter à une base de données MySQL
         private MySqlConnection _connection = new MySqlConnection(_dsn);
         //MySqlCommand permet d'exécuter des commandes SQL
-        private MySqlCommand _command;
+        private MySqlCommand? _command;
         Components.InscriptionUserControl _inscriptionUserControl = new Components.InscriptionUserControl();
         Components.ConnexionUserControl _connexionUserControl = new Components.ConnexionUserControl();
         private string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d\s]).{8,}$";
@@ -24,11 +24,11 @@ namespace TaskMastery.Log
         public SignUpSignInView()
         {
             InitializeComponent();
-            Btn_Changed_Window.Content = "Connexion";
-            Btn_Validate.Content = "Inscription";
-            this.Title = "Inscription";
+            Btn_Changed_Window.Content = "Inscription";
+            Btn_Validate.Content = "Connexion";
+            this.Title = "Connexion";
             
-            GR_Champs.Children.Add(_inscriptionUserControl);
+            GR_Champs.Children.Add(_connexionUserControl);
         }
 
         private void Btn_Changed_Window_Click(object sender, RoutedEventArgs e)
@@ -139,6 +139,10 @@ namespace TaskMastery.Log
                     //on actualise le DataGrid
                     
                     MessageBox.Show("Utilisateur ajouté avec succès", "Nouvel utilisateur", MessageBoxButton.OK, MessageBoxImage.Information);
+                    //fermer la fenêtre et ouvrir la fenêtre principale en lui donnant le pseudo de l'utilisateur   
+                    MainWindow mainWindow = new MainWindow(_inscriptionUserControl.SAI_Pseudo.Text);
+                    mainWindow.Show();
+                    this.Close();
                 }
                 catch (MySqlException ex)
                 {
@@ -167,10 +171,9 @@ namespace TaskMastery.Log
                     if (reader.HasRows)
                     {
                         reader.Read();
-                        MessageBox.Show(reader["password"].ToString());
                         if (BCrypt.Net.BCrypt.Verify(_connexionUserControl.SAI_Password.Password, reader["password"].ToString()))
                         {
-                            MessageBox.Show("Connexion réussie", "Connexion", MessageBoxButton.OK, MessageBoxImage.Information);
+                            //MessageBox.Show("Connexion réussie", "Connexion", MessageBoxButton.OK, MessageBoxImage.Information);
                             //fermer la fenêtre et ouvrir la fenêtre principale en lui donnant le pseudo de l'utilisateur
                             MainWindow mainWindow = new MainWindow(_connexionUserControl.SAI_Mail.Text);
                             mainWindow.Show();
@@ -198,6 +201,6 @@ namespace TaskMastery.Log
                     _connection.Close();
                 }   
             }
-        }
+        }        
     }
 }

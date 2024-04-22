@@ -1,0 +1,29 @@
+﻿<Window x:Class="TaskMastery.View.LogView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskMastery.View"
+        mc:Ignorable="d"
+        Title="SignUpSignInView" Height="400" Width="500" ResizeMode="NoResize">
+    <Grid Background="#FFE8EDDF" Height="400" VerticalAlignment="Top">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="51"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Button
+        Name="Btn_Changed_Window"
+        Content="Connexion"
+        Width="100"
+        Height="25"
+        Margin="375,25,0,0" Click="Btn_Changed_Window_Click" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <Image 
+        Name="Logo"
+        HorizontalAlignment="Center" 
+        Height="50" 
+        VerticalAlignment="Center"
+        Width="50" Grid.Row="1" Source="/Assets/Logo.png"  />
+        <Grid Name="GR_Champs" Grid.Row="2" Height="249" VerticalAlignment="Top"/>
+    </Grid>
+</Window>

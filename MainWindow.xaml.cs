@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TaskMastery.Assets.Components;
 
 namespace TaskMastery
 {
@@ -19,6 +20,10 @@ namespace TaskMastery
         public MainWindow(string _user)
         {
             InitializeComponent();
+            this.Title = "Bienvenue " + _user;
+            //utiliser le user control NavBarUserControl dans le grid navbar
+            NavBarUserControl navBarUserControl = new NavBarUserControl();
+            gridNavBar.Children.Add(navBarUserControl);
         }
     }
 }
