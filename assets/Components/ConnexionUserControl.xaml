@@ -5,19 +5,32 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TaskMastery.Assets.Components"
              mc:Ignorable="d" 
-             d:DesignHeight="172" d:DesignWidth="500">
-    <Grid Height="100" VerticalAlignment="Top" Margin="0,0,106,0" HorizontalAlignment="Right" Width="294">
+             xmlns:vm="clr-namespace:TaskMastery.ViewModel"
+             d:DesignHeight="200" d:DesignWidth="300">
+    <UserControl.DataContext>
+        <vm:LogInUpViewModel/>
+    </UserControl.DataContext>
+    <Grid  Width="300" Height="200" VerticalAlignment="Center" Margin="0,0,0,0" HorizontalAlignment="Center">
         <TextBlock Text="Email" Margin="16,10,0,0" RenderTransformOrigin="0.523,0.584" HorizontalAlignment="Left" Width="80" Height="16" VerticalAlignment="Top"/>
         <TextBox
             x:Name="SAI_Mail" 
             Height="20"
-            Margin="100,8,0,0" HorizontalAlignment="Left" Width="187" VerticalAlignment="Top"/>
+            Margin="100,8,0,0" HorizontalAlignment="Left" Width="187" 
+            VerticalAlignment="Top"
+            Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
+        />
 
         <TextBlock Text="Mot de passe" Margin="16,35,0,0" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left" Width="80"/>
         <PasswordBox
             x:Name="SAI_Password" 
             Height="20"
-            Margin="100,33,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="186"
+            Margin="100,33,0,0" 
+            VerticalAlignment="Top" 
+            HorizontalAlignment="Left"
+            Width="186"
+            Password="{Binding Password, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
         />
+        <Button Content="Connexion" HorizontalAlignment="Center" Margin="0,74,0,99" Command="{Binding ConnexionCommand}"  Width="86"/>
+        <TextBlock Margin="0,108,0,76" HorizontalAlignment="Center" Width="128"><Run Language="fr-fr" Text="Mots de passe oublié ?"/><LineBreak/><Run Language="fr-fr"/></TextBlock>
     </Grid>
 </UserControl>

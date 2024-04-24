@@ -8,13 +8,12 @@
              xmlns:media="clr-namespace:System.Windows.Media;assembly=PresentationCore"
              xmlns:anim="clr-namespace:System.Windows.Media.Animation;assembly=PresentationCore"
              xmlns:vm="clr-namespace:TaskMastery.ViewModel"
-             xmlns:enums="clr-namespace:TaskMastery.ViewModel"
-             mc:Ignorable="d" d:DesignWidth="500" Height="200">
+             mc:Ignorable="d" d:DesignWidth="300" Height="200">
     <!-- Initialise le DataContext avec une nouvelle instance de LogInUpViewModel en passant l'action Inscription -->
     <UserControl.DataContext>
         <vm:LogInUpViewModel/>
     </UserControl.DataContext>
-    <Grid HorizontalAlignment="Center" Width="300" Height="200" VerticalAlignment="Top">
+    <Grid HorizontalAlignment="Center" Width="300" Height="200" VerticalAlignment="Center">
         <TextBlock 
             Text="Email" 
             Margin="16,10,0,0" 
@@ -34,8 +33,9 @@
             
             Height="20"
             PasswordChanged="SAI_Password_PasswordChanged"
-            Margin="100,33,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="186"/>
-        <Rectangle x:Name="FOR_ForcePass" Width="150" Height="2" Fill="Red" RadiusX="2" RadiusY="2" Margin="120,54,30,103" />
+            Margin="100,33,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" 
+            Width="186"/>
+        <Rectangle x:Name="FOR_ForcePass" Width="150" Height="2" Fill="Red" RadiusX="2" RadiusY="2" Margin="120,54,30,144" />
         <!--Password="{Binding Password, UpdateSourceTrigger=PropertyChanged}"-->
 
         <TextBlock Text="Mot de passe" Margin="16,60,0,0" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left" Width="80"/>
@@ -67,7 +67,7 @@
             Height="20"
             Margin="100,133,0,0" 
             HorizontalAlignment="Left" Width="187" VerticalAlignment="Top"/>
-        <Button Content="Inscription" HorizontalAlignment="Center" Margin="0,163,0,10" Command="{Binding LogInUpCommand}" Width="86"/>
+        <Button Content="Inscription" HorizontalAlignment="Center" Margin="0,163,0,10" Command="{Binding InscriptionCommand}"  Width="86"/>
 
     </Grid>
 </UserControl>

@@ -71,7 +71,7 @@ namespace TaskMastery.DataAccess
         {
             OpenConnection();
             //on crée la requete SQL
-            _command.CommandText = $"SELECT * FROM user WHERE {elementToFind} = @element";
+            _command.CommandText = $"SELECT * FROM users WHERE {elementToFind} = @element";
             //on ajoute les parametres à la requete
             _command.Parameters.AddWithValue("element", element);
             //on execute la requete

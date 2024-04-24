@@ -1,4 +1,5 @@
 ﻿using System.Security;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using TaskMastery.Command;
@@ -11,27 +12,15 @@ namespace TaskMastery.ViewModel
     {
         private UserModel _user;
         private UserDataTable _userDataTable;
-        public ICommand? LogInUpCommand { get; }
-        // Enumération pour représenter l'action à effectuer
-        public enum Action
-        {
-            Inscription,
-            Connexion,
-            Suppression
-        }
+        public ICommand? ConnexionCommand { get; }
+        public ICommand? InscriptionCommand { get; }
+        string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d\s]).{8,}$";
         public LogInUpViewModel()
         {
-            Action action = Action.Inscription;
+            ConnexionCommand = new RelayCommand((param) => Connexion(param));
+            InscriptionCommand = new RelayCommand((param) => Inscription(param));
             _user = new UserModel();
             _userDataTable = new UserDataTable();
-            if (action == Action.Inscription)
-            {
-                LogInUpCommand = new RelayCommand((param) => Inscription(param));
-            }
-            else if (action == Action.Connexion)
-            {
-                LogInUpCommand = new RelayCommand((param) => Connexion(param));
-            }
         }
         public string Surname
         {
@@ -69,9 +58,10 @@ namespace TaskMastery.ViewModel
                 OnPropertyChanged(nameof(_user.Pseudo));
             }
         }
-
-        private SecureString? _password;
-        public SecureString? Password
+        // Mot de passe sécurisé
+        private SecureString _password = new SecureString();
+        // Propriété pour le mot de passe
+        public SecureString Password
         {
             get { return _password; }
             set
@@ -93,32 +83,17 @@ namespace TaskMastery.ViewModel
                 System.Runtime.InteropServices.Marshal.ZeroFreeBSTR(ptr);
             }
         }
-
-        private void LoggedIn(object param)
+        //Vérifier si le mots de passe est valide
+        private bool RegexPassword()
         {
-            if (param == null)
+            //controle que le mot de passe fait plus de 8 caractères, Une majuscule, un chiffre et un caractère spécial
+            string password = GetPasswordAsString();
+            if (!Regex.IsMatch(password, passwordPattern))
             {
-                MessageBox.Show("Veuillez remplir tous les champs");
-                return;
+                MessageBox.Show("Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial");
+                return false;
             }
-            // Tester si l'utilisateur est déjà inscrit
-            if (_userDataTable.CheckUser(_user.Email, GetPasswordAsString()))
-            {
-                MessageBox.Show($"Connexion réussi {param}");
-            }
-            else
-            {
-                MessageBox.Show("Connexion échouée");
-            }
-        }
-
-        public void AddUser()
-        {
-            _userDataTable.AddUser(_user);
-        }
-        public bool CheckFields()
-        {
-            return _userDataTable.CheckFieldsNotExists(_user);
+            return true;
         }
         public void DeleteUser()
         {
@@ -129,15 +104,21 @@ namespace TaskMastery.ViewModel
             else
             {
                 MessageBox.Show("User not found");
-            };
+            }
         }
         private void Inscription(object param)
         {
-            // Logique pour l'inscription
+            if (_userDataTable.CheckFieldsNotExists(_user)) {
+                _userDataTable.AddUser(_user);
+                MessageBox.Show("Inscription");
+            }
         }
         private void Connexion(object param)
         {
-            // Logique pour la connexion
+            if (RegexPassword())
+            {
+                MessageBox.Show("Connexion");
+            }
         }
     }
 }
