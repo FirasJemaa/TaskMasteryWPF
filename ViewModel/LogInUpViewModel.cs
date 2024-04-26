@@ -4,23 +4,51 @@ using System.Windows;
 using System.Windows.Input;
 using TaskMastery.Command;
 using TaskMastery.DataAccess;
+using TaskMastery.View;
 using TaskMastery.Model;
 
 namespace TaskMastery.ViewModel
 {
     public class LogInUpViewModel : ViewModelBase
     {
-        private UserModel _user;
-        private UserDataTable _userDataTable;
+        private readonly UserModel _user;
+        private readonly UserDataTable _userDataTable;
+        private readonly Window _LogWindow;
+        private readonly Window _CurrentWindow;
         public ICommand? ConnexionCommand { get; }
         public ICommand? InscriptionCommand { get; }
+        public ICommand? UpdatePassCommand { get; }
+        public ICommand? UpdateCommand { get; }
+        public ICommand? DeleteCommand { get; }
+
         string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d\s]).{8,}$";
-        public LogInUpViewModel()
+        public LogInUpViewModel(Window logWindow)
         {
             ConnexionCommand = new RelayCommand((param) => Connexion(param));
             InscriptionCommand = new RelayCommand((param) => Inscription(param));
             _user = new UserModel();
+            _user.Email = "soufiane@gmail.com";
             _userDataTable = new UserDataTable();
+            _LogWindow = logWindow;
+        }
+        public LogInUpViewModel(string _pseudo, Window currentWindow)
+        {
+            _CurrentWindow = currentWindow;
+            _user = new UserModel();
+            _userDataTable = new UserDataTable();
+            _user = _userDataTable.xRead_Pseudo(_pseudo);
+            UpdateCommand = new RelayCommand((param) => UpdateUser());
+            DeleteCommand = new RelayCommand((param) => DeleteUser());
+            //UpdatePassCommand = new RelayCommand((param) => UpdatePassUser());
+        }
+        public string Id
+        {
+            get => _user.Id.ToString();
+            set
+            {
+                _user.Id = int.Parse(value);
+                OnPropertyChanged(nameof(_user.Id));
+            }
         }
         public string Surname
         {
@@ -58,37 +86,30 @@ namespace TaskMastery.ViewModel
                 OnPropertyChanged(nameof(_user.Pseudo));
             }
         }
-        // Mot de passe sécurisé
-        private SecureString _password = new SecureString();
         // Propriété pour le mot de passe
         public SecureString Password
         {
-            get { return _password; }
+            get { return Password; }
             set
             {
-                _password = value;
+                Password = value;
                 OnPropertyChanged(nameof(Password));
             }
         }
-        // Méthode pour obtenir le mot de passe en clair
-        private string GetPasswordAsString()
+        public SecureString ConfirmPassword
         {
-            IntPtr ptr = System.Runtime.InteropServices.Marshal.SecureStringToBSTR(Password);
-            try
+            get { return ConfirmPassword; }
+            set
             {
-                return System.Runtime.InteropServices.Marshal.PtrToStringBSTR(ptr);
-            }
-            finally
-            {
-                System.Runtime.InteropServices.Marshal.ZeroFreeBSTR(ptr);
+                ConfirmPassword = value;
+                OnPropertyChanged(nameof(ConfirmPassword));
             }
         }
         //Vérifier si le mots de passe est valide
         private bool RegexPassword()
         {
             //controle que le mot de passe fait plus de 8 caractères, Une majuscule, un chiffre et un caractère spécial
-            string password = GetPasswordAsString();
-            if (!Regex.IsMatch(password, passwordPattern))
+            if (!Regex.IsMatch(_user.Password, passwordPattern))
             {
                 MessageBox.Show("Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial");
                 return false;
@@ -99,26 +120,60 @@ namespace TaskMastery.ViewModel
         {
             if (_userDataTable.DeleteUser(_user.Email))
             {
-                MessageBox.Show("User deleted");
-            }
-            else
-            {
-                MessageBox.Show("User not found");
+                MessageBox.Show("Utilisateur supprimé");
+                LogView _logInUpWindow = new LogView();
+                _logInUpWindow.Show();
+                _CurrentWindow.Close();
             }
         }
         private void Inscription(object param)
         {
-            if (_userDataTable.CheckFieldsNotExists(_user)) {
-                _userDataTable.AddUser(_user);
-                MessageBox.Show("Inscription");
+            //récupérer le mot de passe et le mettre dans la variable _password
+            _user.Password = ((System.Windows.Controls.PasswordBox)param).Password;
+            if (_user.Password.Length > 0)
+            {
+                //vérifier que l'email et le pseudo n'existent pas déjà
+                if (_userDataTable.CheckFieldsNotExists(_user))
+                {
+                    _userDataTable.AddUser(_user);
+                    //fermer la view de connexion
+                    _LogWindow.Close();
+                }
             }
         }
         private void Connexion(object param)
         {
-            if (RegexPassword())
+            //récupérer le mot de passe et le mettre dans la variable _password
+            _user.Password = ((System.Windows.Controls.PasswordBox)param).Password;
+            if (NotEmpty() || RegexPassword())
             {
-                MessageBox.Show("Connexion");
+                //vérifier que l'email et le mot de passe sont corrects
+                if (_userDataTable.CheckUser(_user.Email, _user.Password))
+                {
+                    //fermer la view de connexion
+                    _LogWindow.Close();
+                }
             }
+        }
+        private bool NotEmpty()
+        {
+            if (string.IsNullOrEmpty(_user.Email) || string.IsNullOrEmpty(_user.Password))
+            {
+                MessageBox.Show("Veuillez remplir tous les champs");
+                return false;
+            }
+            return true;
+        }
+        private void UpdateUser()
+        {
+            if (_userDataTable.UpdateUser(_user))
+            {
+                MessageBox.Show("Utilisateur modifié");
+            }
+        }   
+        private void UpdatePassUser(object param)
+        {
+            MessageBox.Show(param.ToString());
         }
     }
 }

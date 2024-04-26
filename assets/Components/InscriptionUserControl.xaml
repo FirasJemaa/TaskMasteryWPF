@@ -7,13 +7,8 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:media="clr-namespace:System.Windows.Media;assembly=PresentationCore"
              xmlns:anim="clr-namespace:System.Windows.Media.Animation;assembly=PresentationCore"
-             xmlns:vm="clr-namespace:TaskMastery.ViewModel"
              mc:Ignorable="d" d:DesignWidth="300" Height="200">
-    <!-- Initialise le DataContext avec une nouvelle instance de LogInUpViewModel en passant l'action Inscription -->
-    <UserControl.DataContext>
-        <vm:LogInUpViewModel/>
-    </UserControl.DataContext>
-    <Grid HorizontalAlignment="Center" Width="300" Height="200" VerticalAlignment="Center">
+    <Grid x:Name="WindowName" HorizontalAlignment="Center" Width="300" Height="200" VerticalAlignment="Center">
         <TextBlock 
             Text="Email" 
             Margin="16,10,0,0" 
@@ -67,7 +62,16 @@
             Height="20"
             Margin="100,133,0,0" 
             HorizontalAlignment="Left" Width="187" VerticalAlignment="Top"/>
-        <Button Content="Inscription" HorizontalAlignment="Center" Margin="0,163,0,10" Command="{Binding InscriptionCommand}"  Width="86"/>
+        <Button 
+            Content="Inscription" 
+            HorizontalAlignment="Center" 
+            Margin="0,163,0,10" 
+            Click="SAI_ConfirmPassword_identique" 
+            Command="{Binding InscriptionCommand}" 
+            CommandParameter="{Binding ElementName=SAI_Password}" 
+            Width="86">
+            
+        </Button>
 
     </Grid>
 </UserControl>

@@ -12,16 +12,19 @@ namespace TaskMastery.Assets
     public partial class SignUpSignInView : Window
     {
         //string de connexion à la base de données
-        const string _dsn = "Server=localhost;Database=taskmastery;username=root;password=;";
+        //const string _dsn = "Server=localhost;Database=taskmastery;username=root;password=;";
         //MySqlConnection permet de se connecter à une base de données MySQL
-        private MySqlConnection _connection = new MySqlConnection(_dsn);
+        //private MySqlConnection _connection = new MySqlConnection(_dsn);
         //MySqlCommand permet d'exécuter des commandes SQL
-        private MySqlCommand? _command;
-        Components.InscriptionUserControl _inscriptionUserControl = new Components.InscriptionUserControl();
-        Components.ConnexionUserControl _connexionUserControl = new Components.ConnexionUserControl();
-        private string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d\s]).{8,}$";
-
+        //private MySqlCommand? _command;
+        /*Components.InscriptionUserControl _inscriptionUserControl = new Components.InscriptionUserControl();
+        Components.ConnexionUserControl _connexionUserControl = new Components.ConnexionUserControl();*/
+        //private string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d\s]).{8,}$";
         public SignUpSignInView()
+        {
+            InitializeComponent();
+        }
+        /*public SignUpSignInView()
         {
             InitializeComponent();
             Btn_Changed_Window.Content = "Inscription";
@@ -57,9 +60,6 @@ namespace TaskMastery.Assets
             {
                 return;
             }
-            /*if (Btn_Validate.Content.ToString() == "Inscription")
-            {
-            }*/
             else
             {
                 LogInUp();
@@ -201,6 +201,6 @@ namespace TaskMastery.Assets
                     _connection.Close();
                 }   
             }
-        }        
+        }*/
     }
 }

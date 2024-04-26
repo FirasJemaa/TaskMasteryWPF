@@ -18,7 +18,7 @@
             Content="Connexion"
             Width="100"
             Height="25"
-            Margin="375,25,0,0" Click="Btn_Changed_Window_Click" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            Margin="375,25,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <Image 
             Name="Logo"
             HorizontalAlignment="Center" 
@@ -31,7 +31,7 @@
             Width="100"
             Height="25"
             Margin="200,176,0,0"
-            Grid.Row="2" VerticalAlignment="Top" Click="Btn_Validate_Click" HorizontalAlignment="Left"/>
+            Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Left"/>
         <Grid Name="GR_Champs" Grid.Row="2" Height="172" VerticalAlignment="Top"/>
     </Grid>
 </Window>

@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using TaskMastery.ViewModel;
 
 namespace TaskMastery.Assets.Components
 {
@@ -10,10 +11,10 @@ namespace TaskMastery.Assets.Components
     /// </summary>
     public partial class ConnexionUserControl : UserControl
     {
-        private string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d\s]).{8,}$";
-        public ConnexionUserControl()
+        public ConnexionUserControl(Window parentWindow)
         {
             InitializeComponent();
-        }        
+            DataContext = new LogInUpViewModel(parentWindow);
+        }
     }
 }

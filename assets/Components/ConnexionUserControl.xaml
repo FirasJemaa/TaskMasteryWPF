@@ -5,11 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TaskMastery.Assets.Components"
              mc:Ignorable="d" 
-             xmlns:vm="clr-namespace:TaskMastery.ViewModel"
              d:DesignHeight="200" d:DesignWidth="300">
-    <UserControl.DataContext>
-        <vm:LogInUpViewModel/>
-    </UserControl.DataContext>
     <Grid  Width="300" Height="200" VerticalAlignment="Center" Margin="0,0,0,0" HorizontalAlignment="Center">
         <TextBlock Text="Email" Margin="16,10,0,0" RenderTransformOrigin="0.523,0.584" HorizontalAlignment="Left" Width="80" Height="16" VerticalAlignment="Top"/>
         <TextBox
@@ -27,10 +23,15 @@
             Margin="100,33,0,0" 
             VerticalAlignment="Top" 
             HorizontalAlignment="Left"
-            Width="186"
-            Password="{Binding Password, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+            Width="186"            
         />
-        <Button Content="Connexion" HorizontalAlignment="Center" Margin="0,74,0,99" Command="{Binding ConnexionCommand}"  Width="86"/>
+        <Button 
+            Content="Connexion" 
+            HorizontalAlignment="Center" 
+            Margin="0,74,0,99" 
+            Command="{Binding ConnexionCommand}"  
+            Width="86" 
+            CommandParameter="{Binding ElementName=SAI_Password}"/>
         <TextBlock Margin="0,108,0,76" HorizontalAlignment="Center" Width="128"><Run Language="fr-fr" Text="Mots de passe oublié ?"/><LineBreak/><Run Language="fr-fr"/></TextBlock>
     </Grid>
 </UserControl>
