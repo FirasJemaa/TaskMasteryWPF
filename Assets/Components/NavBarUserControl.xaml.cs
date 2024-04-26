@@ -14,13 +14,5 @@ namespace TaskMastery.Assets.Components
             //Souligner le contenu du btn Dashboard
             BTN_Dashboard.FontWeight = FontWeights.Bold;
         }
-        private void BTN_Dashboard_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-        private void BTN_Profil_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }
