@@ -5,18 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TaskMastery"
         mc:Ignorable="d"
-        Title="Dashboard" MinHeight="450" MinWidth="800">
+        Title="Dashboard" MinHeight="600" MinWidth="1000" ResizeMode="NoResize">
     <Grid Background="#FFE8EDDF">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="570"/>
         </Grid.RowDefinitions>
 
         <Grid x:Name="gridNavBar" Grid.Row="0">
             <Rectangle Fill="#F5CB5C" Height="30" VerticalAlignment="Top" />
 
-            <Button Content="Deconnexion" Margin="0,0,10,0" VerticalAlignment="Center" Height="26" HorizontalAlignment="Right" Width="100"/>
+            <Button Content="Deconnexion" Margin="0,0,10,0" VerticalAlignment="Center" Height="26" HorizontalAlignment="Right" Width="100"
+                    Command="{Binding LogOutCommand}"/>
 
             <Image Name="Logo"         
                HorizontalAlignment="Left"                   
@@ -37,6 +38,7 @@
                 BorderBrush="Transparent" 
                 Foreground="#333533" 
                 Cursor="Hand"
+                Click="BTN_Dashboard_Click"
                 Command="{Binding ShowDashboardCommand}"/>
 
             <Button  
@@ -50,10 +52,11 @@
                 BorderBrush="Transparent"
                 Foreground="#333533" 
                 Cursor="Hand"
+                Click="BTN_Profil_Click"
                 Command="{Binding ShowProfileCommand}"/>
         </Grid>
 
-        <Grid x:Name="gridDashboard" Grid.Row="1">
+        <Grid x:Name="gridDashboard" Grid.Row="1" Margin="0">
             <ContentControl Content="{Binding CurrentUserControl}" />
         </Grid>
     </Grid>

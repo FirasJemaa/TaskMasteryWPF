@@ -12,8 +12,6 @@ namespace TaskMastery.Model
         public BigInteger Id { get; set; }
         public BigInteger IdUser { get; set; }
         public string Projet { get; set; }
-        public string Statut { get; set; }
-        public int NombreStatut { get; set; }
         public DateTime Created_at { get; set; }
         public DateTime Updated_at { get; set; }
     }

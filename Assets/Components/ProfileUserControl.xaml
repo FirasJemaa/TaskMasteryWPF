@@ -28,7 +28,7 @@
                 Height="20"
                 Margin="483,48,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"
                 Width="186"/>
-        <Rectangle x:Name="FOR_ForcePass" Height="2" Fill="Red" RadiusX="2" RadiusY="2" Margin="493,103,0,295" HorizontalAlignment="Left" Width="163" />
+        <Rectangle x:Name="FOR_ForcePass" Height="2" Fill="Red" RadiusX="2" RadiusY="2" Margin="493,103,0,0" HorizontalAlignment="Left" Width="163" VerticalAlignment="Top" />
         <!--Password="{Binding Password, UpdateSourceTrigger=PropertyChanged}"-->
 
         <TextBlock Margin="350,80,0,0" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left" Width="129"><Run Language="fr-fr" Text="Nouveau m"/><Run Text="ot de passe"/></TextBlock>

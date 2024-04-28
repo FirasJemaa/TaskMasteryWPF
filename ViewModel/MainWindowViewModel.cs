@@ -4,6 +4,7 @@ using System.Windows.Input;
 using TaskMastery.Assets.Components;
 using TaskMastery.Command;
 using TaskMastery.ViewModel;
+using TaskMastery.View;
 
 public class MainWindowViewModel : ViewModelBase
 {
@@ -24,11 +25,13 @@ public class MainWindowViewModel : ViewModelBase
     // Commande pour afficher le UserControl ProfileUserControl
     public ICommand ShowProfileCommand { get; }
     public ICommand ShowDashboardCommand { get; }
+    public ICommand LogOutCommand { get; }
     public MainWindowViewModel(string _pseudo, Window currentWindow)
     {
-        // Initialisez la commande pour afficher le UserControl ProfileUserControl
+        // Initialisez la commande pour afficher les UserControl 
         ShowProfileCommand = new RelayCommand(ShowProfile);
         ShowDashboardCommand = new RelayCommand(ShowDashboard);
+        LogOutCommand = new RelayCommand(LogOut);
         // Par défaut, affichez un autre UserControl ici si nécessaire
         CurrentUserControl = new DashboardUserControl(_pseudo);
         // Affectez la valeur de _pseudo à la propriété Pseudo
@@ -46,5 +49,13 @@ public class MainWindowViewModel : ViewModelBase
     {
         // Créez une instance du UserControl ProfileUserControl et affectez-la à CurrentUserControl
         CurrentUserControl = new DashboardUserControl(Pseudo);
+    }
+    private void LogOut(object parameter)
+    {
+        // Créez une instance de la fenêtre de connexion et affichez-la
+        LogView loginWindow = new LogView();
+        loginWindow.Show();
+        // Fermez la fenêtre actuelle
+        CurrentWindow.Close();
     }
 }

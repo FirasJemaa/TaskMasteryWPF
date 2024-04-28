@@ -1,4 +1,8 @@
 ﻿using MySql.Data.MySqlClient;
+using Mysqlx.Crud;
+using Org.BouncyCastle.Tls.Crypto;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.DirectoryServices.ActiveDirectory;
 using System.IO.Packaging;
 using System.Numerics;
@@ -303,13 +307,10 @@ namespace TaskMastery.DataAccess
             {
                 OpenConnection();
                 //on crée une commande SQL pour mettre à jour une ligne dans la table
-                _command = new MySqlCommand("SELECT P.id as id_Projet, P.designation AS projet, S.designation AS statut, COUNT(T.id) AS NombreTaches FROM statuts AS S " +
-                    "INNER JOIN taches AS T ON S.id = T.id_statut " +
-                    "INNER JOIN projets as P ON P.id = T.id_projet " +
+                _command = new MySqlCommand("SELECT P.id, designation FROM projets as P " +
                     "INNER JOIN users as U ON U.id = P.id_user " +
-                    "WHERE U.pseudo = @pseudo " +
-                    "GROUP BY P.id, P.designation, S.designation " +
-                    "ORDER BY projet, statut;", _connection);
+                    "WHERE pseudo = @pseudo " +
+                    "ORDER BY designation;", _connection);
                 //on ajoute les paramètres de la commande SQL
                 _command.Parameters.AddWithValue("@pseudo", pseudo);
                 //on execute la requete
@@ -320,10 +321,8 @@ namespace TaskMastery.DataAccess
                 while (reader.Read())
                 {
                     ProjectModel project = new ProjectModel();
-                    project.Id = int.Parse(reader["id_Projet"].ToString());
-                    project.Projet = reader["projet"].ToString();
-                    project.Statut = reader["statut"].ToString();
-                    project.NombreStatut = int.Parse(reader["NombreTaches"].ToString());
+                    project.Id = int.Parse(reader["id"].ToString());
+                    project.Projet = reader["designation"].ToString();
                     projects.Add(project);
                 }
                 return projects;
@@ -337,6 +336,88 @@ namespace TaskMastery.DataAccess
             {
                 _connection.Close();
             }            
+        }
+        public ObservableCollection<EtiquetteModel> LoadEtiquettesFromDatabase(string pseudo)
+        {
+            // Retourner la liste des étiquettes chargées selon le pseudo de l'utilisateur
+            try
+            {
+                OpenConnection();
+                //on crée une commande SQL pour mettre à jour une ligne dans la table
+                _command = new MySqlCommand("SELECT E.id, designation FROM etiquettes as E " +
+                                       "INNER JOIN users as U ON U.id = E.id_user " +
+                                       "WHERE pseudo = @pseudo " +
+                                       "ORDER BY designation;", _connection);
+                //on ajoute les paramètres de la commande SQL
+                _command.Parameters.AddWithValue("@pseudo", pseudo);
+                //on execute la requete
+                MySqlDataReader reader = _command.ExecuteReader();
+                //on crée une liste d'étiquettes
+                ObservableCollection<EtiquetteModel> etiquettes = new ObservableCollection<EtiquetteModel>();
+                //on lit les données
+                while (reader.Read())
+                {
+                    EtiquetteModel etiquette = new EtiquetteModel();
+                    etiquette.Id = int.Parse(reader["id"].ToString());
+                    etiquette.Designation = reader["designation"].ToString();
+                    etiquettes.Add(etiquette);
+                }
+                return etiquettes;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return new ObservableCollection<EtiquetteModel>();
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+        public ObservableCollection<TacheModel> LoadTachesFromDatabase(BigInteger id_Projet)
+        {
+            // Retourner la liste des tâches chargées selon le pseudo de l'utilisateur
+            try
+            {
+                OpenConnection();
+                //on crée une commande SQL pour mettre à jour une ligne dans la table
+                _command = new MySqlCommand("SELECT T.id, T.designation as T_designation, S.designation as S_designation, E.designation as " +
+                    "E_designation, count(A.id) as NbrParticipant " +
+                    "FROM taches as T " +
+                    "LEFT JOIN attributions as A ON A.id_tache = T.id " +
+                    "INNER JOIN projets as P ON P.id = T.id_projet " +
+                    "LEFT JOIN statuts as S ON S.id = T.id_statut " +
+                    "LEFT JOIN etiquettes as E ON E.id = T.id_etiquette " +
+                    "WHERE P.id = @id_projet_sys " +
+                    "GROUP BY T.id, T.designation, S.designation, E.designation;", _connection);
+                //on ajoute les paramètres de la commande SQL
+                _command.Parameters.AddWithValue("@id_projet_sys", id_Projet);
+                //on execute la requete
+                MySqlDataReader reader = _command.ExecuteReader();
+                //on crée une liste de tâches
+                ObservableCollection<TacheModel> taches = new ObservableCollection<TacheModel>();
+                //on lit les données
+                while (reader.Read())
+                {
+                    TacheModel tache = new TacheModel();
+                    tache.Id = int.Parse(reader["id"].ToString());
+                    tache.Titre = reader["T_designation"].ToString();
+                    tache.Statut = reader["S_designation"].ToString();
+                    tache.Etiquette = reader["E_designation"].ToString();
+                    tache.NombreParticipants = int.Parse(reader["NbrParticipant"].ToString());
+                    taches.Add(tache);
+                }
+                return taches;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return new ObservableCollection<TacheModel>();
+            }
+            finally
+            {
+                _connection.Close();
+            }
         }
     }
 }
