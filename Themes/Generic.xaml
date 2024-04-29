@@ -97,10 +97,10 @@
         <!--lorsqu'on survol mettre le background en jaune clair-->
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Foreground" Value="Yellow"/>
+                <Setter Property="FontWeight" Value="Bold"/>
             </Trigger>
             <Trigger Property="IsFocused" Value="True">
-                <Setter Property="Foreground" Value="Red"/>
+                <Setter Property="FontWeight" Value="Bold"/>
             </Trigger>
         </Style.Triggers>
     </Style>

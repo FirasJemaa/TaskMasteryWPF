@@ -55,17 +55,6 @@ namespace TaskMastery.ViewModel
                 OnPropertyChanged(nameof(Etiquettes));
             }
         }
-        //élément étiqutte sélectionné
-        private EtiquetteModel _selectedEtiquette;
-        public EtiquetteModel SelectedEtiquette
-        {
-            get { return _selectedEtiquette; }
-            set
-            {
-                _selectedEtiquette = value;
-                OnPropertyChanged(nameof(SelectedEtiquette));
-            }
-        }
 
         // Liste de tache qui sera affichée dans le tableau
         private ObservableCollection<TacheModel> _taches;
@@ -78,8 +67,20 @@ namespace TaskMastery.ViewModel
                 OnPropertyChanged(nameof(Taches));
             }
         }
-        public ICommand ShowProjectDetailsCommand { get; }
-        public ICommand UpdateTacheCommand { get; }
+        // tache sélectionnée
+        private TacheModel _selectedTache;
+        public TacheModel SelectedTache
+        {
+            get { return _selectedTache; }
+            set
+            {
+                _selectedTache = value;
+                OnPropertyChanged(nameof(SelectedTache));
+            }
+        }
+        public ICommand? ShowProjectDetailsCommand { get; }
+        public ICommand? UpdateTacheCommand { get; }
+        public ICommand? ShowTacheCommand { get; }
         public DashboardViewModel(string pseudo)
         {
             _userDataTable = new UserDataTable();
@@ -94,8 +95,10 @@ namespace TaskMastery.ViewModel
 
             // Initialisez la commande pour mettre à jour une tâche
             UpdateTacheCommand = new RelayCommand(UpdateTache);
-        }
 
+            // Initialisez la commande pour afficher une tâche
+            ShowTacheCommand = new RelayCommand(ShowTache);
+        }
         private void ShowProjectDetails(object parameter)
         {
             // Implémentez la logique pour afficher les détails du projet sélectionné
@@ -104,14 +107,12 @@ namespace TaskMastery.ViewModel
                 //
             }
         }
-
         // Méthode pour charger les projets depuis la base de données
         private List<ProjectModel> LoadProjectsFromDatabase(string pseudo)
         {
             // Retournez la liste des projets chargés
             return new List<ProjectModel>(); 
         }
-
         public void UpdateTable()
         {
             //changer la propriété
@@ -121,22 +122,13 @@ namespace TaskMastery.ViewModel
                 Taches = _userDataTable.LoadTachesFromDatabase(_selectedProject.Id);
             }
         }
-
-        private void AddNewItem()
-        {
-            // Logique à exécuter lors de l'ajout d'un nouvel élément
-            MessageBox.Show("Ajout d'un nouvel élément");
-        }
-
-        private void CellEditEnding()
-        {
-            // Logique à exécuter lors de la fin de l'édition d'une cellule
-            MessageBox.Show("Fin de l'édition d'une cellule");
-        }
-
         private void UpdateTache(object param)
         {
             MessageBox.Show("Mise à jour de la tâche");
+        }
+        private void ShowTache(object param)
+        {
+            MessageBox.Show("Affichage de la tâche");
         }
     }
 }

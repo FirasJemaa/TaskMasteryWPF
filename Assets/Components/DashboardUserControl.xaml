@@ -41,8 +41,10 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <DataGrid 
+                
                 x:Name="Tbl_Tache" 
                 ItemsSource="{Binding Taches}" 
+                IsReadOnly="True"
                 Height="260" 
                 Loaded="Tbl_Tache_Loaded"
                 VerticalAlignment="Top"
@@ -53,12 +55,15 @@
                 ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
                 ScrollViewer.VerticalScrollBarVisibility="Hidden" 
                 MinColumnWidth="136" 
-                MouseDoubleClick="Tbl_Tache_MouseDoubleClick"
+                
+                SelectionChanged="Tbl_Tache_SelectionChanged"
                 />
-            
+            <!--MouseDoubleClick="Tbl_Tache_MouseDoubleClick"-->
+
             <DataGrid 
                 x:Name="Tbl_Etiquette" 
-                ItemsSource="{Binding Etiquettes}" 
+                ItemsSource="{Binding Etiquettes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                 
+                AutoGenerateColumns="True"
                 Margin="358,285,10,10" 
                 CanUserAddRows="True"
                 Loaded="Tbl_Etiquette_Loaded"
@@ -67,8 +72,44 @@
                 ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
                 ScrollViewer.VerticalScrollBarVisibility="Hidden"        
                 />
-
-            <DataGrid d:ItemsSource="{d:SampleData ItemCount=2}" Margin="10,285,358,10" Padding="0,0,0,-2" HorizontalScrollBarVisibility="Hidden" VerticalContentAlignment="Center" MinWidth="3" MinColumnWidth="150"/>
+            <Label Content="{Binding SelectedTache.Id}" HorizontalAlignment="Left" Margin="124,275,0,0" VerticalAlignment="Top" Width="149"/>
+            <StackPanel Margin="10,285,358,10" Orientation="Vertical" >
+                <TextBlock 
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    TextWrapping="Wrap" 
+                    Text="Titre" 
+                    FontSize="14" 
+                    Height="25"/>
+                <TextBox 
+                    Text="{Binding SelectedTache.Titre}"
+                    HorizontalContentAlignment="Left"
+                    VerticalContentAlignment="Center"
+                    TextWrapping="Wrap" 
+                    Width="180" 
+                    Height="25"/>
+                <TextBlock 
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    TextWrapping="Wrap" 
+                    Text="Statut" 
+                    FontSize="14" 
+                    Height="25"/>
+                <ComboBox 
+                    Height="25"
+                    Width="170"/>
+                <TextBlock 
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    TextWrapping="Wrap" 
+                    Text="Etiquette" 
+                    FontSize="14"  
+                    Height="25"/>
+                <ComboBox 
+                    ItemsSource="{Binding Etiquettes}"
+                    Height="25"
+                    Width="170"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

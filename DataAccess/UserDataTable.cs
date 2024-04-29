@@ -76,7 +76,6 @@ namespace TaskMastery.DataAccess
                 _command.Parameters.AddWithValue("@created_at", DateTime.Now);
                 //on execute la requete
                 _command.ExecuteNonQuery();
-                OpenMainWindow(_userModel.Pseudo);
                 //on ferme la connexion
                 _connection.Close();
                 return true;
@@ -89,10 +88,10 @@ namespace TaskMastery.DataAccess
         }
 
         //cette methode permet de verifier si les champs sont corrects
-        public bool CheckFieldsNotExists(UserModel _userModel)
+        public bool CheckFieldsNotExists(string Email, string Pseudo, BigInteger Id)
         {
             //controle que le mail et le pseudo n'existe pas déjà dans la base de données
-            if (CheckExists(_userModel.Email, "email", _userModel.Id) || CheckExists(_userModel.Pseudo, "pseudo", _userModel.Id))
+            if (CheckExists(Email, "email", Id) || CheckExists(Pseudo, "pseudo", Id))
             {
                 return false;
             }
@@ -176,7 +175,6 @@ namespace TaskMastery.DataAccess
                     reader.Read();
                     if (BCrypt.Net.BCrypt.Verify(password, reader["password"].ToString()))
                     {
-                        OpenMainWindow(reader["pseudo"].ToString());
                         return (true);
                     }
                     else
@@ -212,13 +210,6 @@ namespace TaskMastery.DataAccess
             //on crée une commande SQL
             _command = _connection.CreateCommand();
         }
-
-        private void OpenMainWindow(string _Pseudo)
-        {
-            MainWindow mainWindow = new MainWindow(_Pseudo);
-            mainWindow.Show();
-        }
-
         public UserModel xRead_Pseudo(string _pseudo)
         {
             try
@@ -272,7 +263,7 @@ namespace TaskMastery.DataAccess
             try
             {
                 //Vérifier que le nouveau pseudo ou mail n'existe pas déjà
-                if (!CheckFieldsNotExists(_userUpdate))
+                if (!CheckFieldsNotExists(_userUpdate.Email, _userUpdate.Pseudo, _userUpdate.Id))
                 {
                     MessageBox.Show("Le pseudo ou l'email existe déjà", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
                     return false;
@@ -381,7 +372,7 @@ namespace TaskMastery.DataAccess
             {
                 OpenConnection();
                 //on crée une commande SQL pour mettre à jour une ligne dans la table
-                _command = new MySqlCommand("SELECT T.id, T.designation as T_designation, S.designation as S_designation, E.designation as " +
+                _command = new MySqlCommand("SELECT T.id, T.titre as T_designation, S.designation as S_designation, E.designation as " +
                     "E_designation, count(A.id) as NbrParticipant " +
                     "FROM taches as T " +
                     "LEFT JOIN attributions as A ON A.id_tache = T.id " +
@@ -413,6 +404,45 @@ namespace TaskMastery.DataAccess
             {
                 MessageBox.Show(e.Message);
                 return new ObservableCollection<TacheModel>();
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+        public UserModel GetUser(string Email)
+        {
+            //récupérer les informations de l'utilisateur et les renvoyer dans une ObservableCollection
+            try
+            {
+                OpenConnection();
+                //on crée la requete SQL
+                _command.CommandText = "SELECT * FROM users WHERE email = @email";
+                //on ajoute les parametres à la requete
+                _command.Parameters.AddWithValue("email", Email);
+                //on execute la requete
+                MySqlDataReader reader = _command.ExecuteReader();
+                //on lit les données
+                if (reader.Read())
+                {
+                    UserModel user = new UserModel();
+                    user.Id = Int64.Parse(reader["id"].ToString());
+                    user.Name = reader["name"].ToString();
+                    user.Surname = reader["surname"].ToString();
+                    user.Email = reader["email"].ToString();
+                    user.Pseudo = reader["pseudo"].ToString();
+                    user.Password = reader["password"].ToString();
+                    return user;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return null;
             }
             finally
             {

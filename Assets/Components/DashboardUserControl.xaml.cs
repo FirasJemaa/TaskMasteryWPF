@@ -11,10 +11,11 @@ namespace TaskMastery.Assets.Components
     /// </summary>
     public partial class DashboardUserControl : UserControl
     {
+        private DashboardViewModel dashboardViewModel;
         public DashboardUserControl(string pseudo)
         {
             InitializeComponent();
-            DashboardViewModel dashboardViewModel = new DashboardViewModel(pseudo);
+            dashboardViewModel = new DashboardViewModel(pseudo);
             this.DataContext = dashboardViewModel;            
         }
 
@@ -42,11 +43,9 @@ namespace TaskMastery.Assets.Components
                 Tbl_Tache.Columns[0].Visibility = Visibility.Collapsed;
             }
         }
-
-        private void Tbl_Tache_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Tbl_Tache_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //afficher le statut de la tâche qui a été double-cliquée
-            MessageBox.Show(Tbl_Tache.SelectedItem.ToString());
+            dashboardViewModel.SelectedTache = (TacheModel)Tbl_Tache.SelectedItem;
         }
     }
 }
