@@ -10,7 +10,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="570"/>
+            <RowDefinition Height="570*"/>
         </Grid.RowDefinitions>
 
         <Grid x:Name="gridNavBar" Grid.Row="0">

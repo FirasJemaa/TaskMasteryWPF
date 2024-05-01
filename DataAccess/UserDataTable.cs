@@ -410,16 +410,25 @@ namespace TaskMastery.DataAccess
                 _connection.Close();
             }
         }
-        public UserModel GetUser(string Email)
+        public UserModel GetUser(bool bEmail, string element)
         {
             //récupérer les informations de l'utilisateur et les renvoyer dans une ObservableCollection
             try
             {
                 OpenConnection();
                 //on crée la requete SQL
-                _command.CommandText = "SELECT * FROM users WHERE email = @email";
+                _command.CommandText = "SELECT * FROM users WHERE ";
                 //on ajoute les parametres à la requete
-                _command.Parameters.AddWithValue("email", Email);
+                if (bEmail)
+                {
+                    _command.CommandText += "email = @email";
+                    _command.Parameters.AddWithValue("email", element);
+                }
+                else
+                {
+                    _command.CommandText += "pseudo = @pseudo";
+                    _command.Parameters.AddWithValue("pseudo", element);
+                }
                 //on execute la requete
                 MySqlDataReader reader = _command.ExecuteReader();
                 //on lit les données
@@ -447,6 +456,29 @@ namespace TaskMastery.DataAccess
             finally
             {
                 _connection.Close();
+            }
+        }
+        public bool UpdatePassword(BigInteger id, string password)
+        {
+            //cette classe permet de mettre à jour un utilisateur dans la base de données
+            try
+            {
+                OpenConnection();
+                //on crée une commande SQL pour mettre à jour une ligne dans la table
+                _command = new MySqlCommand("UPDATE users SET password = @password WHERE id = @id", _connection);
+                //on ajoute les paramètres de la commande SQL
+                _command.Parameters.AddWithValue("@password", BCrypt.Net.BCrypt.HashPassword(password));
+                _command.Parameters.AddWithValue("@id", id);
+                //on execute la requete
+                _command.ExecuteNonQuery();
+                //on ferme la connexion
+                _connection.Close();
+                return true;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return false;
             }
         }
     }

@@ -7,93 +7,130 @@
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="750">
     <Grid>
+        <!-- Informations personnelles -->
+        <Label Content="Modifier les informations" HorizontalAlignment="Left" Margin="20,20,0,0" VerticalAlignment="Top" Width="186" FontWeight="Bold" FontSize="14"/>
+        <TextBlock 
+            Text="Email" 
+            Margin="47,52,0,0" 
+            RenderTransformOrigin="0.523,0.584"
+            HorizontalAlignment="Left" 
+            Width="66" 
+            Height="16" VerticalAlignment="Top"/>
+        <TextBox
+            x:Name="SAI_Mail" 
+            Height="20"
+            Margin="131,50,0,0" 
+            HorizontalAlignment="Left" 
+            Width="187" 
+            VerticalAlignment="Top"
+            Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
 
         <TextBlock 
-                Text="Email" 
-                Margin="47,52,0,0" 
-                RenderTransformOrigin="0.523,0.584" 
-                HorizontalAlignment="Left" 
-                Width="66" Height="16" VerticalAlignment="Top"
-            />
+            Margin="47,114,0,0" 
+            Height="16" 
+            VerticalAlignment="Top" 
+            HorizontalAlignment="Left" 
+            Width="65" 
+            Text="Prénom"/>
         <TextBox
-                x:Name="SAI_Mail" 
-                Height="20"
-                Margin="131,50,0,0" 
-                HorizontalAlignment="Left" Width="187" VerticalAlignment="Top"
-                Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
-
-        <TextBlock Margin="350,50,0,0" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left" Width="129"><Run Language="fr-fr" Text="Ancien m"/><Run Text="ot de passe"/></TextBlock>
-        <PasswordBox
-                x:Name="SAI_Password"             
-                Height="20"
-                Margin="483,48,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"
-                Width="186"/>
-        <Rectangle x:Name="FOR_ForcePass" Height="2" Fill="Red" RadiusX="2" RadiusY="2" Margin="493,103,0,0" HorizontalAlignment="Left" Width="163" VerticalAlignment="Top" />
-        <!--Password="{Binding Password, UpdateSourceTrigger=PropertyChanged}"-->
-
-        <TextBlock Margin="350,80,0,0" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left" Width="129"><Run Language="fr-fr" Text="Nouveau m"/><Run Text="ot de passe"/></TextBlock>
-        <PasswordBox
-                x:Name="SAI_NewPassword" 
-                Height="20"
-                PasswordChanged="SAI_Password_PasswordChanged"
-                Margin="483,78,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="186"/>
-
-        <TextBlock Margin="47,114,0,0" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left" Width="65"><Run Language="fr-fr" Text="Prenom"/></TextBlock>
-        <TextBox
-                x:Name="SAI_Name" 
-                Height="20"
-                Margin="131,111,0,0" 
-                HorizontalAlignment="Left" Width="187" VerticalAlignment="Top"
-                Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
-            />
-
-        <TextBlock Margin="47,144,0,0" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left" Width="65"><Run Language="fr-fr" Text="Nom"/></TextBlock>
-        <TextBox
-                x:Name="SAI_Surname"
-                Height="20"
-                Margin="131,141,0,0" 
-                HorizontalAlignment="Left" Width="187" VerticalAlignment="Top"
-                Text="{Binding Surname, UpdateSourceTrigger=PropertyChanged}" 
-            />
-
-        <TextBlock Margin="47,84,0,0" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left" Width="65"><Run Language="fr-fr" Text="Pseudo"/></TextBlock>
-        <TextBox
-                x:Name="SAI_Pseudo" 
-                Height="20"
-                Margin="131,81,0,0" 
-                HorizontalAlignment="Left" Width="187" VerticalAlignment="Top"
-                Text="{Binding Pseudo, UpdateSourceTrigger=PropertyChanged}"
-            />
-        <Button 
-                Content="Modifier" 
-                HorizontalAlignment="Left" 
-                Margin="138,170,0,0" 
-                Width="86" Height="25" VerticalAlignment="Top"
-                Command="{Binding UpdateCommand}"
-            />
-        <TextBlock Margin="350,111,0,0" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left" Width="129"><Run Language="fr-fr" Text="Confirmer"/><Run Text=" m"/><Run Text="ot de passe"/></TextBlock>
-        <PasswordBox
-            x:Name="SAI_ConfirmPassword" 
+            x:Name="SAI_Name" 
             Height="20"
-            Margin="483,109,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="186"/>
+            Margin="131,111,0,0" 
+            HorizontalAlignment="Left" 
+            Width="187" 
+            VerticalAlignment="Top"
+            Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+            />
+
+        <TextBlock 
+            Margin="47,144,0,0" 
+            Height="16" 
+            VerticalAlignment="Top" 
+            HorizontalAlignment="Left" 
+            Text="Nom"
+            Width="65"/>
+        <TextBox
+            x:Name="SAI_Surname"
+            Height="20"
+            Margin="131,141,0,0" 
+            HorizontalAlignment="Left" 
+            Width="187" 
+            VerticalAlignment="Top"
+            Text="{Binding Surname, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <TextBlock 
+            Margin="47,84,0,0" 
+            Height="16" 
+            VerticalAlignment="Top" 
+            HorizontalAlignment="Left" 
+            Text="Pseudo"
+            Width="65"/>
+        <TextBox
+            x:Name="SAI_Pseudo"
+            Height="20"
+            Margin="131,81,0,0" 
+            HorizontalAlignment="Left" 
+            Width="187" 
+            VerticalAlignment="Top"
+            Text="{Binding Pseudo, UpdateSourceTrigger=PropertyChanged}"
+            />
+
+        <Button 
+            Content="Modifier" 
+            HorizontalAlignment="Left"
+            Margin="138,176,0,0" 
+            Width="86" 
+            Height="25" 
+            VerticalAlignment="Top"
+            Command="{Binding UpdateCommand}"
+            />
+
+        <!--Modification du mot de passe-->
+        <Label Content="Modifier le mot de passe" HorizontalAlignment="Left" Margin="390,19,0,0" VerticalAlignment="Top" Width="178" FontWeight="Bold" FontSize="14"/>
+        <TextBlock 
+            Margin="401,50,0,0" 
+            Height="16" 
+            VerticalAlignment="Top" 
+            HorizontalAlignment="Left" 
+            Width="130" 
+            Text="Ancien mot de passe"/>
+        <StackPanel Margin="534,50,0,329" Width="187" HorizontalAlignment="Left">
+            <local:PasswordUserControl Password="{Binding OldPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="187" />
+        </StackPanel>
+
+        <TextBlock 
+            Margin="401,80,0,0" 
+            Height="16" 
+            VerticalAlignment="Top" 
+            HorizontalAlignment="Left" 
+            Width="130" 
+            Text="Nouveau mot de passe" />
+        <StackPanel Margin="534,80,0,299" Width="187" HorizontalAlignment="Left">
+            <local:PasswordUserControl Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="187" />
+        </StackPanel>
+
+        <TextBlock Margin="401,111,0,0" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left" Width="129"><Run Language="fr-fr" Text="Confirmer"/><Run Text=" m"/><Run Text="ot de passe"/></TextBlock>
+        <StackPanel Margin="534,110,0,269" Width="187" HorizontalAlignment="Left">
+            <local:PasswordUserControl Password="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="187" />
+        </StackPanel>
+
         <Button 
             Content="Modifier" 
             HorizontalAlignment="Left" 
-            Margin="493,136,0,0" 
+            Margin="544,143,0,0" 
             Width="86" Height="24" VerticalAlignment="Top"
-            Command="{Binding UpdatePassword}">
+            Command="{Binding UpdatePasswordCommand}">
         </Button>
+
+        <!-- Supprimer le compte -->
+        <Label Content="Supprimer le compte" HorizontalAlignment="Left" Margin="20,218,0,0" VerticalAlignment="Top" Width="171" FontWeight="Bold" FontSize="14"/>
         <Button 
             Content="Supprimer le compte" 
             HorizontalAlignment="Left" 
             Background="Red"
-            BorderBrush="#F78272"
+            BorderBrush="#F78272"            
             Margin="60,249,0,0" 
             Width="186" Height="25" VerticalAlignment="Top"
-            Command="{Binding DeleteCommand}" 
-            />
-        <Label Content="Modifier les informations" HorizontalAlignment="Left" Margin="20,20,0,0" VerticalAlignment="Top" Width="186" FontWeight="Bold" FontSize="14"/>
-        <Label Content="Modifier le mot de passe" HorizontalAlignment="Left" Margin="339,19,0,0" VerticalAlignment="Top" Width="178" FontWeight="Bold" FontSize="14"/>
-        <Label Content="Supprimer le compte" HorizontalAlignment="Left" Margin="20,218,0,0" VerticalAlignment="Top" Width="171" FontWeight="Bold" FontSize="14"/>
+            Command="{Binding DeleteCommand}" />
     </Grid>
 </UserControl>

@@ -14,7 +14,9 @@
             Margin="16,10,0,0" 
             RenderTransformOrigin="0.523,0.584" 
             HorizontalAlignment="Left" 
-            Width="66" Height="16" VerticalAlignment="Top"/>
+            Width="66" 
+            Height="16" 
+            VerticalAlignment="Top"/>
         <TextBox
             x:Name="SAI_Mail" 
             Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
@@ -23,21 +25,14 @@
            HorizontalAlignment="Left" Width="187" VerticalAlignment="Top"/>
 
         <TextBlock Text="Mot de passe" Margin="16,35,0,0" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left" Width="80"/>
-        <PasswordBox
-            x:Name="SAI_Password" 
-            
-            Height="20"
-            PasswordChanged="SAI_Password_PasswordChanged"
-            Margin="100,33,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" 
-            Width="186"/>
-        <Rectangle x:Name="FOR_ForcePass" Width="150" Height="2" Fill="Red" RadiusX="2" RadiusY="2" Margin="120,54,30,144" />
-        <!--Password="{Binding Password, UpdateSourceTrigger=PropertyChanged}"-->
+        <StackPanel Margin="100,33,13,145" Width="187">
+            <local:PasswordUserControl Password="{Binding Password, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="187" />
+        </StackPanel>
 
         <TextBlock Text="Mot de passe" Margin="16,60,0,0" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left" Width="80"/>
-        <PasswordBox
-            x:Name="SAI_ConfirmPassword" 
-            Height="20"
-            Margin="100,58,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="186"/>
+        <StackPanel Margin="100,59,13,119" Width="187">
+            <local:PasswordUserControl Password="{Binding ConfirmPassword, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="187" />
+        </StackPanel>
 
         <TextBlock Margin="16,85,0,0" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left" Width="65"><Run Language="fr-fr" Text="Prenom"/></TextBlock>
         <TextBox
@@ -66,9 +61,7 @@
             Content="Inscription" 
             HorizontalAlignment="Center" 
             Margin="0,163,0,10" 
-            Click="SAI_ConfirmPassword_identique" 
             Command="{Binding InscriptionCommand}" 
-            CommandParameter="{Binding ElementName=SAI_Password}" 
             Width="86">
             
         </Button>

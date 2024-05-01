@@ -18,8 +18,6 @@
 
         <TextBlock Text="Mot de passe" Margin="16,35,0,0" Height="16" VerticalAlignment="Top" HorizontalAlignment="Left" Width="80"/>
         
-        
-
         <Button 
             x:Name="BTN_Connexion"
             Content="Connexion" 
@@ -27,7 +25,6 @@
             Margin="0,74,0,99" 
             Command="{Binding ConnexionCommand}"  
             Width="86" />
-        <TextBlock Margin="0,108,0,76" HorizontalAlignment="Center" Width="128"><Run Language="fr-fr" Text="Mots de passe oublié ?"/><LineBreak/><Run Language="fr-fr"/></TextBlock>
         <StackPanel Margin="100,34,13,144" Width="187">
             <local:PasswordUserControl Password="{Binding Password, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="187" />
         </StackPanel>

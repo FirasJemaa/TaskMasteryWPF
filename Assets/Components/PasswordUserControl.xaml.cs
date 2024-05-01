@@ -1,5 +1,8 @@
-﻿using System.Windows;
+﻿using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
+using System.Windows.Media;
 
 namespace TaskMastery.Assets.Components
 {
@@ -26,6 +29,89 @@ namespace TaskMastery.Assets.Components
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             Password = PasswordBox.Password;
+            Force_Password();
+        }
+        private void Force_Password()
+        {
+            //faire un regex et voir la force du mot de passe en fonction on change la couleur du rectangle qui s'appelle FOR_ForcePass (tailledu mot de passe, caractères spéciaux, majuscules, minuscules, chiffres)
+            int point = 0;
+
+            if (PasswordBox.Password.Length >= 11)
+            {
+                point++;
+            }
+
+            if (Regex.IsMatch(PasswordBox.Password, @"[\W_]"))
+            {
+                point++;
+            }
+
+            if (Regex.IsMatch(PasswordBox.Password, @"[a-z]"))
+            {
+                point++;
+            }
+
+            if (Regex.IsMatch(PasswordBox.Password, @"[A-Z]"))
+            {
+                point++;
+            }
+
+            if (Regex.IsMatch(PasswordBox.Password, @"[0-9]"))
+            {
+                point++;
+            }
+
+            switch (point)
+            {
+                case 0:
+                    Transition(PasswordBox.BorderBrush, Colors.Red);
+                    break;
+                case 1:
+                    Transition(PasswordBox.BorderBrush, Colors.Orange);
+                    break;
+                case 2:
+                    Transition(PasswordBox.BorderBrush, Colors.DarkGoldenrod);
+                    break;
+                case 3:
+                    Transition(PasswordBox.BorderBrush, Colors.Yellow);
+                    break;
+                case 4:
+                    Transition(PasswordBox.BorderBrush, Colors.LightGreen);
+                    break;
+                case 5:
+                    Transition(PasswordBox.BorderBrush, Colors.Green);
+                    break;
+            }
+
+        }
+        private void Transition(Brush couleurDepart, Color couleurFinal)
+        {
+            SolidColorBrush couleurDeDepart = couleurDepart as SolidColorBrush;
+
+            if (couleurDeDepart != null)
+            {
+                // Créer une nouvelle instance de SolidColorBrush avec la couleur finale
+                SolidColorBrush nouvelleCouleur = new SolidColorBrush(couleurFinal);
+
+                // Créer une animation de transition de la couleur de la bordure
+                ColorAnimation animation = new ColorAnimation();
+                animation.From = couleurDeDepart.Color; // Couleur de départ
+                animation.To = couleurFinal; // Couleur finale
+                animation.Duration = new Duration(TimeSpan.FromSeconds(0.5)); // Durée de l'animation (0.5 seconde)
+                animation.EasingFunction = new System.Windows.Media.Animation.CubicEase() { EasingMode = System.Windows.Media.Animation.EasingMode.EaseInOut }; // Transition ease in out
+
+                // Définir la cible de l'animation sur la nouvelle couleur
+                Storyboard.SetTarget(animation, nouvelleCouleur);
+                Storyboard.SetTargetProperty(animation, new PropertyPath(SolidColorBrush.ColorProperty)); // Animation de la propriété Color
+
+                // Créer et démarrer le storyboard de l'animation
+                Storyboard story = new Storyboard();
+                story.Children.Add(animation);
+                story.Begin();
+
+                // Appliquer la nouvelle couleur à la propriété BorderBrush du PasswordBox
+                PasswordBox.BorderBrush = nouvelleCouleur;
+            }
         }
     }
 }

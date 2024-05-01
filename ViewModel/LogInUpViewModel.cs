@@ -15,13 +15,13 @@ namespace TaskMastery.ViewModel
         private readonly UserDataTable _userDataTable;
         private readonly Window _LogWindow;
         private readonly Window _CurrentWindow;
-        private BigInteger _id { get; set; }
+        private BigInteger _id;
         public BigInteger Id
         {
             get => _id;
             set
             {
-                Id = _id;
+                _id = value;
                 OnPropertyChanged(nameof(Id));
             }
         }
@@ -76,18 +76,29 @@ namespace TaskMastery.ViewModel
                 OnPropertyChanged(nameof(Password));
             }
         }
+        private string _confirmPassword;
         public string ConfirmPassword
         {
-            get { return ConfirmPassword; }
+            get { return _confirmPassword; }
             set
             {
-                ConfirmPassword = value;
+                _confirmPassword = value;
                 OnPropertyChanged(nameof(ConfirmPassword));
+            }
+        }
+        private string _oldPassword;
+        public string OldPassword
+        {
+            get { return _oldPassword; }
+            set
+            {
+                _oldPassword = value;
+                OnPropertyChanged(nameof(OldPassword));
             }
         }
         public ICommand? ConnexionCommand { get; }
         public ICommand? InscriptionCommand { get; }
-        public ICommand? UpdatePassCommand { get; }
+        public ICommand? UpdatePasswordCommand { get; }
         public ICommand? UpdateCommand { get; }
         public ICommand? DeleteCommand { get; }
         string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d\s]).{8,}$";
@@ -105,8 +116,9 @@ namespace TaskMastery.ViewModel
         {
             UpdateCommand = new RelayCommand((param) => UpdateUser());
             DeleteCommand = new RelayCommand((param) => DeleteUser());
+            UpdatePasswordCommand = new RelayCommand((param) => UpdatePassUser(param));
             _userDataTable = new UserDataTable();
-
+            getUser(false, _pseudo);
             _CurrentWindow = currentWindow;
         }
 
@@ -132,24 +144,36 @@ namespace TaskMastery.ViewModel
         }
         private void LogUp(object param)
         {
-            //récupérer le mot de passe et le mettre dans la variable _password
-            if (Password.Length > 0)
+            //Vérifier qu'il y a aucun champ vide sauf id
+            if (string.IsNullOrEmpty(Surname) || string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Pseudo))
             {
-                //vérifier que l'email et le pseudo n'existent pas déjà
-                if (_userDataTable.CheckFieldsNotExists(Email, Pseudo, Id))
+                MessageBox.Show("Veuillez remplir tous les champs");
+                return;
+            }
+            if (RegexPassword())
+            {
+                if (Password == ConfirmPassword)
                 {
-                    //créer un nouvel utilisateur
-                    UserModel _user = new UserModel
+                    //vérifier que l'email et le pseudo n'existent pas déjà
+                    if (_userDataTable.CheckFieldsNotExists(Email, Pseudo, Id))
                     {
-                        Surname = Surname,
-                        Name = Name,
-                        Email = Email,
-                        Pseudo = Pseudo,
-                        Password = Password
-                    };
-                    _userDataTable.AddUser(_user);
-                    MainWindow _MainWindowView = new MainWindow(Pseudo);
-                    _LogWindow.Close();
+                        //créer un nouvel utilisateur
+                        UserModel _user = new UserModel
+                        {
+                            Surname = Surname,
+                            Name = Name,
+                            Email = Email,
+                            Pseudo = Pseudo,
+                            Password = Password
+                        };
+                        _userDataTable.AddUser(_user);
+                        MainWindow _MainWindowView = new MainWindow(Pseudo);
+                        _LogWindow.Close();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Les mots de passe ne correspondent pas");
                 }
             }
         }
@@ -160,7 +184,7 @@ namespace TaskMastery.ViewModel
                 //vérifier que l'email et le mot de passe sont corrects
                 if (_userDataTable.CheckUser(Email, Password))
                 {
-                    getUser();
+                    getUser(true, Email);
                     MainWindow _MainWindowView = new MainWindow(Pseudo);
                     _MainWindowView.Show();
                     //fermer la view de connexion
@@ -192,17 +216,41 @@ namespace TaskMastery.ViewModel
                 MessageBox.Show("Utilisateur modifié");
             }
         }
-        private void getUser()
+        private void getUser(bool bMail, string contenu)
         {
-            UserModel _user = _userDataTable.GetUser(Email);
+            UserModel _user = _userDataTable.GetUser(bMail, contenu);
             Id = _user.Id;
             Surname = _user.Surname;
             Name = _user.Name;
             Pseudo = _user.Pseudo;
+            Email = _user.Email;
         }
         private void UpdatePassUser(object param)
         {
-            //Mettre a jour le mot de passe dans profil
+            //Vérifier que l'aien mot de passe est correct
+            if (_userDataTable.CheckUser(Email, OldPassword))
+            {
+                if (RegexPassword())
+                {
+                    if (Password == ConfirmPassword)
+                    {
+                        UserModel _user = new UserModel
+                        {
+                            Id = Id,
+                            Password = Password
+                        };
+                        if (_userDataTable.UpdatePassword(Id,Password))
+                        {
+                            MessageBox.Show("Mot de passe modifié");
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Les mots de passe ne correspondent pas");
+                    }
+                }
+            }
+            
         }
     }
 }
