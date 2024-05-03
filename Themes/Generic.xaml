@@ -107,7 +107,7 @@
 
     <!-- Style pour le DataGrid -->
     <Style TargetType="DataGrid">
-        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="BorderThickness" Value="4" />
         <Setter Property="BorderBrush" Value="#F5CB5C" />
         <Setter Property="RowBackground" Value="#333533" />
         <Setter Property="Background" Value="#333533" />

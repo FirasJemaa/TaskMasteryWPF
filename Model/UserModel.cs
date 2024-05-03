@@ -18,6 +18,14 @@ namespace TaskMastery.Model
 
         //Liste des projets de l'utilisateur
         public List<ProjectModel> Projects { get; set; }
+        public UserModel() { 
+            Name = "";
+            Surname = "";
+            Email = "";
+            Password = "";
+            Pseudo = "";
+            Projects = new List<ProjectModel>();
+        }
 
     }
 }

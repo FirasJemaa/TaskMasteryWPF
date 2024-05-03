@@ -26,78 +26,82 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
-        <Grid Grid.Column="1" Margin="5,0,0,0" RenderTransformOrigin="0.731,0.747">
+        <Grid Grid.Column="1" RenderTransformOrigin="0.731,0.747" Margin="5,0,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <DataGrid 
-                
+            
+            <!-- Liste de tache -->
+            <DataGrid                 
                 x:Name="Tbl_Tache" 
-                ItemsSource="{Binding Taches}" 
+                ItemsSource="{Binding Taches}"
+                AutoGenerateColumns="False"
+                SelectedItem="{Binding SelectedTache, UpdateSourceTrigger=PropertyChanged}"
                 IsReadOnly="True" 
-                Loaded="Tbl_Tache_Loaded"
-                Margin="10,20,20,0" 
+                CanUserAddRows="True"
+                Margin="20,38,20,0" 
                 VerticalScrollBarVisibility="Hidden" 
                 ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
-                ScrollViewer.VerticalScrollBarVisibility="Hidden" 
-                MinColumnWidth="136" 
-                
-                SelectionChanged="Tbl_Tache_SelectionChanged" Height="250" VerticalAlignment="Top"
-                />
-            <!--MouseDoubleClick="Tbl_Tache_MouseDoubleClick"-->
+                ScrollViewer.VerticalScrollBarVisibility="Hidden" Height="250" VerticalAlignment="Top"
+            >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Id" Visibility="Hidden" Binding="{Binding Id}"/>
+                    <DataGridTextColumn Header="Titre" Width="*" Binding="{Binding Titre}"/>
+                    <DataGridTextColumn Header="Statut" Width="*" Binding="{Binding Statut}"/>
+                    <DataGridTextColumn Header="Etiquette" Width="*" Binding="{Binding Etiquette}"/>
+                    <DataGridTextColumn Header="Checklist" Width="*" Visibility="Visible" Binding="{Binding Cheklist}"/>
+                    <DataGridTextColumn Header="Nombre de participant" Width="*" Binding="{Binding NombreParticipants}"/>
+                </DataGrid.Columns>
 
+            </DataGrid>
+
+            <!-- Liste des participants -->
+            <DataGrid 
+                x:Name="Tbl_Etiquette_Copy" 
+                ItemsSource="{Binding Etiquettes, UpdateSourceTrigger=LostFocus}"                 
+                AutoGenerateColumns="False"
+                Margin="20,342,420,20" 
+                CanUserAddRows="True"
+                Width="390"
+                CanUserDeleteRows="True"                 
+                AddingNewItem="Tbl_Etiquette_AddingNewItem"
+                ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
+                ScrollViewer.VerticalScrollBarVisibility="Hidden"       
+            >
+                <DataGrid.Columns>
+                    <!--<DataGridTextColumn Header="Id_User" Visibility="Visible" Binding="{Binding Id_User}"/>-->
+                    <!--<DataGridTextColumn Header="Id" Visibility="Visible" Binding="{Binding Id}"/>-->
+                    <DataGridTextColumn Header="Liste des étiquettes" Width="*" Binding="{Binding Designation}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- Liste des étiquettes -->
             <DataGrid 
                 x:Name="Tbl_Etiquette" 
-                ItemsSource="{Binding Etiquettes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"                 
-                AutoGenerateColumns="True"
-                Margin="340,0,20,20" 
+                ItemsSource="{Binding Etiquettes, UpdateSourceTrigger=LostFocus}"                 
+                AutoGenerateColumns="False"
+                Margin="400,0,0,20" 
+                Width="390"
                 CanUserAddRows="True"
-                Loaded="Tbl_Etiquette_Loaded"
-                CanUserDeleteRows="True" 
-                MinColumnWidth="329" 
+                CanUserDeleteRows="True"                 
+                AddingNewItem="Tbl_Etiquette_AddingNewItem"
                 ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
-                ScrollViewer.VerticalScrollBarVisibility="Hidden" Height="280" VerticalAlignment="Bottom"        
-                />
-            <StackPanel Margin="10,0,0,20" Orientation="Vertical" HorizontalAlignment="Left" Width="327" Height="265" VerticalAlignment="Bottom" >
-                <TextBlock 
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    TextWrapping="Wrap" 
-                    Text="Titre" 
-                    FontSize="14" 
-                    Height="25"/>
-                <TextBox 
-                    Text="{Binding SelectedTache.Titre}"
-                    HorizontalContentAlignment="Left"
-                    VerticalContentAlignment="Center"
-                    TextWrapping="Wrap" 
-                    Width="180" 
-                    Height="25"/>
-                <TextBlock 
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    TextWrapping="Wrap" 
-                    Text="Statut" 
-                    FontSize="14" 
-                    Height="25"/>
-                <ComboBox 
-                    Height="25"
-                    Width="170"/>
-                <TextBlock 
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    TextWrapping="Wrap" 
-                    Text="Etiquette" 
-                    FontSize="14"  
-                    Height="25"/>
-                <ComboBox 
-                    ItemsSource="{Binding Etiquettes}"
-                    Height="25"
-                    Width="170"/>
-            </StackPanel>
+                ScrollViewer.VerticalScrollBarVisibility="Hidden" Height="238" VerticalAlignment="Bottom"       
+            >
+                <DataGrid.Columns>
+                    <!--<DataGridTextColumn Header="Id" Visibility="Visible" Binding="{Binding Id}"/>-->
+                    <DataGridTextColumn Header="Désignation" Width="*" Binding="{Binding Designation}"/>
+                    <!--<DataGridTextColumn Header="Id_User" Visibility="Visible" Binding="{Binding Id_User}"/>-->
+                </DataGrid.Columns>
+            </DataGrid>
+            
+            
+            <Label Content="Liste des tâches" HorizontalAlignment="Left" Margin="20,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.462" Width="145" FontSize="14" Height="31" />
+            <Label Content="Liste des participants par tâche" HorizontalAlignment="Left" Margin="20,306,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.462" Width="235"  FontSize="14" Height="31" />
+            <Label Content="Liste des étiquettes" HorizontalAlignment="Left" Margin="420,306,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.462" Width="235"  FontSize="14" Height="31" />
         </Grid>
     </Grid>
 </UserControl>

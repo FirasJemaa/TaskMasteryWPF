@@ -14,5 +14,15 @@ namespace TaskMastery.Model
         public string Statut { get; set; }
         public string Etiquette { get; set; }
         public int NombreParticipants { get; set; }
+        public string Cheklist { get; set; }
+        public TacheModel()
+        {
+            Id = 0;
+            Titre = "";
+            Statut = "";
+            Etiquette = "";
+            NombreParticipants = 0;
+            Cheklist = "";
+        }
     }
 }

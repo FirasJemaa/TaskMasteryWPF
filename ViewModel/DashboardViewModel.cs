@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Input;
 using TaskMastery.Command;
@@ -33,16 +34,6 @@ namespace TaskMastery.ViewModel
                 OnPropertyChanged(nameof(SelectedProject));
             }
         }
-        private string _sCommandeTest;
-        public string sCommandeTest 
-        {
-            get { return _sCommandeTest; }
-            set
-            {
-                _sCommandeTest = value;
-                OnPropertyChanged(nameof(sCommandeTest));
-            }
-        }
         // Ajoutez une propriété pour les étiquettes
         private ObservableCollection<EtiquetteModel> _etiquettes;
         public ObservableCollection<EtiquetteModel> Etiquettes
@@ -50,9 +41,24 @@ namespace TaskMastery.ViewModel
             get { return _etiquettes; }
             set
             {
-                MessageBox.Show("Etiquettes chargées");
-                _etiquettes = value;
-                OnPropertyChanged(nameof(Etiquettes));
+                if (_etiquettes != value)
+                {
+                    // Vérifiez si la collection a été modifiée
+                    if (_etiquettes != null)
+                    {
+                        _etiquettes.CollectionChanged -= EtiquettesCollectionChanged;
+                    }
+
+                    _etiquettes = value;
+
+                    // Abonnez-vous à l'événement CollectionChanged ici
+                    if (_etiquettes != null)
+                    {
+                        _etiquettes.CollectionChanged += EtiquettesCollectionChanged;
+                    }
+
+                    OnPropertyChanged(nameof(Etiquettes));
+                }
             }
         }
 
@@ -75,7 +81,22 @@ namespace TaskMastery.ViewModel
             set
             {
                 _selectedTache = value;
+                if (_selectedTache != null)
+                {
+                    // Mettre à jour les propriétés de la tâche sélectionnée
+                }
                 OnPropertyChanged(nameof(SelectedTache));
+            }
+        }
+        // Pseudo
+        private string _pseudo;
+        public string Pseudo
+        {
+            get { return _pseudo; }
+            set
+            {
+                _pseudo = value;
+                OnPropertyChanged(nameof(Pseudo));
             }
         }
         public ICommand? ShowProjectDetailsCommand { get; }
@@ -83,12 +104,20 @@ namespace TaskMastery.ViewModel
         public ICommand? ShowTacheCommand { get; }
         public DashboardViewModel(string pseudo)
         {
+            // Initialisez
+            _projects = new List<ProjectModel>();
+            _selectedProject = new ProjectModel();
+            _etiquettes = new ObservableCollection<EtiquetteModel>();
+            _taches = new ObservableCollection<TacheModel>();
+            _selectedTache = new TacheModel();
+            _pseudo = "";
+            Pseudo = pseudo;
             _userDataTable = new UserDataTable();
             // Initialisez les données des projets, par exemple à partir d'une base de données
-            Projects = _userDataTable.LoadProjectsFromDatabase(pseudo);
+            Projects = _userDataTable.LoadProjectsFromDatabase(Pseudo);
 
             // Afficher la liste des étiquettes
-            Etiquettes = _userDataTable.LoadEtiquettesFromDatabase(pseudo);
+            Etiquettes = _userDataTable.LoadEtiquettesFromDatabase(Pseudo);
 
             // Initialisez la commande pour afficher les détails d'un projet
             ShowProjectDetailsCommand = new RelayCommand(ShowProjectDetails);
@@ -98,6 +127,9 @@ namespace TaskMastery.ViewModel
 
             // Initialisez la commande pour afficher une tâche
             ShowTacheCommand = new RelayCommand(ShowTache);
+
+            // Initialisez la liste des tâches
+            Taches = new ObservableCollection<TacheModel>();
         }
         private void ShowProjectDetails(object parameter)
         {
@@ -129,6 +161,32 @@ namespace TaskMastery.ViewModel
         private void ShowTache(object param)
         {
             MessageBox.Show("Affichage de la tâche");
+        }
+        // Méthode pour gérer l'événement CollectionChanged
+        private void EtiquettesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                // La méthode Remove a été utilisée pour supprimer un élément de la collection
+                // Obtenir les éléments supprimés de la collection :
+                foreach (EtiquetteModel item in e.OldItems)
+                {
+                    // Donner l'id de l'élément à la méthode DeleteEtiquette de la classe dataAccess
+                    if (!_userDataTable.DeleteEtiquette(item.Id)){
+                        // Remettre l'élément dans la collection si la suppression a échoué
+                        Etiquettes.Add(item);
+                    }
+                }
+            // Méthode Add a été utilisée pour ajouter un élément à la collection
+            }else if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (EtiquetteModel item in e.NewItems)
+                {
+                    // Ajouter l'élément à la base de données
+                    _userDataTable.InsertEtiquette(item.Designation, item.Id_User);
+
+                }
+            }
         }
     }
 }

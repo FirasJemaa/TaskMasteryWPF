@@ -1,16 +1,8 @@
 ﻿using MySql.Data.MySqlClient;
-using Mysqlx.Crud;
-using Org.BouncyCastle.Tls.Crypto;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.DirectoryServices.ActiveDirectory;
-using System.IO.Packaging;
 using System.Numerics;
-using System.Text.RegularExpressions;
 using System.Windows;
-using TaskMastery.Assets.Components;
 using TaskMastery.Model;
-using TaskMastery.View;
 
 namespace TaskMastery.DataAccess
 {
@@ -20,10 +12,14 @@ namespace TaskMastery.DataAccess
         //string de connexion à la base de données
         const string _dsn = "Server=localhost;Database=taskmastery;username=root;password=;";
         //MySqlConnection permet de se connecter à une base de données MySQL
-        private MySqlConnection _connection = new MySqlConnection(_dsn);
+        readonly MySqlConnection _connection = new MySqlConnection(_dsn);
         //MySqlCommand permet d'exécuter des commandes SQL
         private MySqlCommand? _command;
         //cette methode permet de verifier si l'utilisateur existe dans la base de données
+        public UserDataTable()
+        {
+
+        }
         public bool UserExistBeforeToDelete(string email, string password)
         {
             OpenConnection();
@@ -210,7 +206,7 @@ namespace TaskMastery.DataAccess
             //on crée une commande SQL
             _command = _connection.CreateCommand();
         }
-        public UserModel xRead_Pseudo(string _pseudo)
+        public UserModel? Read_Pseudo(string _pseudo)
         {
             try
             {
@@ -335,7 +331,7 @@ namespace TaskMastery.DataAccess
             {
                 OpenConnection();
                 //on crée une commande SQL pour mettre à jour une ligne dans la table
-                _command = new MySqlCommand("SELECT E.id, designation FROM etiquettes as E " +
+                _command = new MySqlCommand("SELECT E.id, designation, U.id as idUser, id_user FROM etiquettes as E " +
                                        "INNER JOIN users as U ON U.id = E.id_user " +
                                        "WHERE pseudo = @pseudo " +
                                        "ORDER BY designation;", _connection);
@@ -348,9 +344,10 @@ namespace TaskMastery.DataAccess
                 //on lit les données
                 while (reader.Read())
                 {
-                    EtiquetteModel etiquette = new EtiquetteModel();
+                    EtiquetteModel etiquette = new EtiquetteModel(Int64.Parse(reader["idUser"].ToString()));
                     etiquette.Id = int.Parse(reader["id"].ToString());
                     etiquette.Designation = reader["designation"].ToString();
+                    etiquette.Id_User = Int64.Parse(reader["id_user"].ToString());
                     etiquettes.Add(etiquette);
                 }
                 return etiquettes;
@@ -372,15 +369,17 @@ namespace TaskMastery.DataAccess
             {
                 OpenConnection();
                 //on crée une commande SQL pour mettre à jour une ligne dans la table
-                _command = new MySqlCommand("SELECT T.id, T.titre as T_designation, S.designation as S_designation, E.designation as " +
-                    "E_designation, count(A.id) as NbrParticipant " +
+                _command = new MySqlCommand("SELECT T.id, T.titre as T_designation, S.designation as S_designation, E.designation as E_designation," +
+                    "count(A.id) as NbrParticipant, COUNT(C.designation) as TotalResult, SUM(C.checked) as TotalResultChecked " +
                     "FROM taches as T " +
                     "LEFT JOIN attributions as A ON A.id_tache = T.id " +
                     "INNER JOIN projets as P ON P.id = T.id_projet " +
                     "LEFT JOIN statuts as S ON S.id = T.id_statut " +
                     "LEFT JOIN etiquettes as E ON E.id = T.id_etiquette " +
+                    "LEFT JOIN checklists as C ON C.id_tache = T.id " +
                     "WHERE P.id = @id_projet_sys " +
-                    "GROUP BY T.id, T.designation, S.designation, E.designation;", _connection);
+                    "GROUP BY T.id, T.designation, S.designation, E.designation " +
+                    "ORDER BY T_designation, T.id;", _connection);
                 //on ajoute les paramètres de la commande SQL
                 _command.Parameters.AddWithValue("@id_projet_sys", id_Projet);
                 //on execute la requete
@@ -396,6 +395,14 @@ namespace TaskMastery.DataAccess
                     tache.Statut = reader["S_designation"].ToString();
                     tache.Etiquette = reader["E_designation"].ToString();
                     tache.NombreParticipants = int.Parse(reader["NbrParticipant"].ToString());
+                    if (reader["TotalResultChecked"] == DBNull.Value)
+                    {
+                        tache.Cheklist = "0/0";
+                    }
+                    else
+                    {
+                        tache.Cheklist = reader["TotalResultChecked"].ToString() + "/" + reader["TotalResult"].ToString();
+                    }
                     taches.Add(tache);
                 }
                 return taches;
@@ -410,7 +417,7 @@ namespace TaskMastery.DataAccess
                 _connection.Close();
             }
         }
-        public UserModel GetUser(bool bEmail, string element)
+        public UserModel? GetUser(bool bEmail, string element)
         {
             //récupérer les informations de l'utilisateur et les renvoyer dans une ObservableCollection
             try
@@ -479,6 +486,109 @@ namespace TaskMastery.DataAccess
             {
                 MessageBox.Show(e.Message);
                 return false;
+            }
+        }
+                  
+        public BigInteger GetId(string pseudo)
+        {
+            try
+            {
+                OpenConnection();
+                //on crée la requete SQL
+                _command.CommandText = "SELECT id FROM users WHERE pseudo = @pseudo";
+                //on ajoute les parametres à la requete
+                _command.Parameters.AddWithValue("pseudo", pseudo);
+                //on execute la requete
+                MySqlDataReader reader = _command.ExecuteReader();
+                //on retourne si le mail existe ou non
+                if (reader.Read())
+                {
+                    return Int64.Parse(reader["id"].ToString());
+                }
+                return 0;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return 0;
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+        public BigInteger InsertEtiquette(string designation, BigInteger id_User)
+        {
+            //cette classe permet de mettre à jour un utilisateur dans la base de données
+            try
+            {
+                OpenConnection();
+                //on crée une commande SQL pour mettre à jour une ligne dans la table
+                _command = new MySqlCommand("INSERT INTO etiquettes (designation, id_user, created_at) VALUES (@designation, @id_user, @data_Day);", _connection);
+                //on ajoute les paramètres de la commande SQL
+                _command.Parameters.AddWithValue("@designation", designation);
+                _command.Parameters.AddWithValue("@id_user", id_User);
+                _command.Parameters.AddWithValue("@data_Day", DateTime.Now);
+                //on execute la requete
+                _command.ExecuteNonQuery();
+                //on retourne l'id de l'etiquette
+                return (BigInteger)_command.LastInsertedId;
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return 0;
+            }
+            finally
+            {
+                //on ferme la connexion
+                _connection.Close();
+            }
+        }
+        public bool DeleteEtiquette(BigInteger id)
+        {
+            //cette classe permet de mettre à jour un utilisateur dans la base de données
+            try
+            {
+                OpenConnection();
+                //on crée une commande SQL pour mettre à jour une ligne dans la table
+                _command = new MySqlCommand("DELETE FROM etiquettes WHERE id = @id", _connection);
+                //on ajoute les paramètres de la commande SQL
+                _command.Parameters.AddWithValue("@id", id);
+                //on execute la requete
+                _command.ExecuteNonQuery();
+                //on ferme la connexion
+                _connection.Close();
+                return true;
+            }
+            catch
+            {
+                MessageBox.Show("Cette étiquette ne peut pas être effacer car elle est utiliser comme élément dans une ou plusieur tâche(s)");
+                return false;
+            }
+        }
+
+        public void UpdateEtiquette(BigInteger id, string designation)
+        {
+            //cette classe permet de mettre à jour un utilisateur dans la base de données
+            try
+            {
+                OpenConnection();
+                //on crée une commande SQL pour mettre à jour une ligne dans la table
+                _command = new MySqlCommand("UPDATE etiquettes SET designation = @designation, updated_at = @dataDay WHERE id = @id", _connection);
+                //on ajoute les paramètres de la commande SQL
+                _command.Parameters.AddWithValue("@designation", designation);
+                _command.Parameters.AddWithValue("@dataDay", DateTime.Now);
+                _command.Parameters.AddWithValue("@id", id);
+                //on execute la requete
+                _command.ExecuteNonQuery();
+                //on ferme la connexion
+                _connection.Close();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
             }
         }
     }

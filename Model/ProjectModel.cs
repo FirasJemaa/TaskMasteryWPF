@@ -14,5 +14,11 @@ namespace TaskMastery.Model
         public string Projet { get; set; }
         public DateTime Created_at { get; set; }
         public DateTime Updated_at { get; set; }
+        public ProjectModel()
+        {
+            Id = 0;
+            IdUser = 0;
+            Projet = "";
+        }
     }
 }
