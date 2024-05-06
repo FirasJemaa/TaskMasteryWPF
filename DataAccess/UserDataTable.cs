@@ -1,7 +1,9 @@
 ﻿using MySql.Data.MySqlClient;
+using Mysqlx.Crud;
 using System.Collections.ObjectModel;
 using System.Numerics;
 using System.Windows;
+using System.Xml.Linq;
 using TaskMastery.Model;
 
 namespace TaskMastery.DataAccess
@@ -109,14 +111,15 @@ namespace TaskMastery.DataAccess
                 MySqlDataReader reader = _command.ExecuteReader();
                 //on retourne si le mail existe ou non
                 return reader.HasRows;
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 MessageBox.Show(e.Message);
                 return false;
             }
             finally
             {
-                   _connection.Close();
+                _connection.Close();
             }
         }
         //cette methode permet de suppimer un utilisateur de la base de données
@@ -314,7 +317,7 @@ namespace TaskMastery.DataAccess
                 }
                 return projects;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.Message);
                 return new List<ProjectModel>();
@@ -322,7 +325,7 @@ namespace TaskMastery.DataAccess
             finally
             {
                 _connection.Close();
-            }            
+            }
         }
         public ObservableCollection<EtiquetteModel> LoadEtiquettesFromDatabase(string pseudo)
         {
@@ -488,7 +491,7 @@ namespace TaskMastery.DataAccess
                 return false;
             }
         }
-                  
+
         public BigInteger GetId(string pseudo)
         {
             try
@@ -524,7 +527,7 @@ namespace TaskMastery.DataAccess
             {
                 OpenConnection();
                 //on crée une commande SQL pour mettre à jour une ligne dans la table
-                _command = new MySqlCommand("INSERT INTO etiquettes (designation, id_user, created_at) VALUES (@designation, @id_user, @data_Day);", _connection);
+                _command = new MySqlCommand("INSERT INTO etiquettes (designation, id_user, created_at) VALUES (@designation, @id_User, @data_Day);", _connection);
                 //on ajoute les paramètres de la commande SQL
                 _command.Parameters.AddWithValue("@designation", designation);
                 _command.Parameters.AddWithValue("@id_user", id_User);
@@ -591,5 +594,48 @@ namespace TaskMastery.DataAccess
                 MessageBox.Show(e.Message);
             }
         }
+
+        //liste des participants
+        public ObservableCollection<ParticipantModel> LoadParticipantsFromDatabase(BigInteger id_Tache)
+        {
+            // Retourner la liste des participants chargées selon le pseudo de l'utilisateur
+            try
+            {
+                OpenConnection();
+                //on crée une commande SQL pour mettre à jour une ligne dans la table
+                _command = new MySqlCommand("SELECT A.id, pseudo, name, surname " +
+                    "FROM attributions as A " +
+                    "INNER JOIN users as U ON U.id = A.id_inviter " +
+                    "WHERE id_tache = @id_tache_sys " +
+                    "ORDER BY pseudo, name, surname; ", _connection);
+                //on ajoute les paramètres de la commande SQL
+                _command.Parameters.AddWithValue("@id_tache_sys", id_Tache);
+                //on execute la requete
+                MySqlDataReader reader = _command.ExecuteReader();
+                //on crée une liste de tâches
+                ObservableCollection<ParticipantModel> participants = new ObservableCollection<ParticipantModel>();
+                //on lit les données
+                while (reader.Read())
+                {
+                    ParticipantModel participant = new ParticipantModel();
+                    participant.Id = Int64.Parse(reader["id"].ToString());
+                    participant.Pseudo = reader["pseudo"].ToString();
+                    participant.Nom = reader["name"].ToString();
+                    participant.Prenom = reader["surname"].ToString();
+                    participants.Add(participant);
+                }
+                return participants;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return new ObservableCollection<ParticipantModel>();
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
     }
 }

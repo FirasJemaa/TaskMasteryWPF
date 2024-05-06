@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Numerics;
 using System.Windows;
 using System.Windows.Input;
 using TaskMastery.Command;
@@ -83,7 +84,8 @@ namespace TaskMastery.ViewModel
                 _selectedTache = value;
                 if (_selectedTache != null)
                 {
-                    // Mettre à jour les propriétés de la tâche sélectionnée
+                    // Mettre à jour la table des participants
+                    Participants = _userDataTable.LoadParticipantsFromDatabase(_selectedTache.Id);
                 }
                 OnPropertyChanged(nameof(SelectedTache));
             }
@@ -99,6 +101,19 @@ namespace TaskMastery.ViewModel
                 OnPropertyChanged(nameof(Pseudo));
             }
         }
+
+        // Participants
+        private ObservableCollection<ParticipantModel> _participants;
+        public ObservableCollection<ParticipantModel> Participants
+        {
+            get { return _participants; }
+            set
+            {
+                _participants = value;
+                OnPropertyChanged(nameof(Participants));
+            }
+        }
+        // Commandes
         public ICommand? ShowProjectDetailsCommand { get; }
         public ICommand? UpdateTacheCommand { get; }
         public ICommand? ShowTacheCommand { get; }
@@ -183,7 +198,8 @@ namespace TaskMastery.ViewModel
                 foreach (EtiquetteModel item in e.NewItems)
                 {
                     // Ajouter l'élément à la base de données
-                    _userDataTable.InsertEtiquette(item.Designation, item.Id_User);
+                    item.Id_User = _userDataTable.GetId(Pseudo);
+                    item.Id =  _userDataTable.InsertEtiquette(item.Designation, item.Id_User);
 
                 }
             }

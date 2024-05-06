@@ -45,25 +45,28 @@ namespace TaskMastery.Model
         }
         UserDataTable dataAccess;
 
+        public EtiquetteModel()
+        {
+            _designation = "";
+            dataAccess = new UserDataTable();
+            id_userCurrent = 0;
+        }
         public EtiquetteModel(string pseudo)
         {
+            _designation = "";
             dataAccess = new UserDataTable();
             id_userCurrent = dataAccess.GetId(pseudo);
-            _designation = "";
         }
         public EtiquetteModel(BigInteger _id_userCurrent)
         {
+            _designation = "";
             dataAccess = new UserDataTable();
             this.id_userCurrent = _id_userCurrent;
         }
         private void updateField()
         {
             //Mise à jour de l'étiquette sinon création
-            if (_id == 0)
-            {
-                _id = dataAccess.InsertEtiquette(_designation, id_userCurrent);
-            }
-            else
+            if (_id != 0)
             {
                 dataAccess.UpdateEtiquette(_id, _designation);
             }
