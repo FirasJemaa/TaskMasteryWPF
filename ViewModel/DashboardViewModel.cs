@@ -11,7 +11,7 @@ namespace TaskMastery.ViewModel
 {
     internal class DashboardViewModel : ViewModelBase
     {
-        private UserDataTable _userDataTable;
+        readonly private UserDataTable _userDataTable;
         private List<ProjectModel> _projects;
         public List<ProjectModel> Projects
         {
@@ -120,14 +120,15 @@ namespace TaskMastery.ViewModel
         public DashboardViewModel(string pseudo)
         {
             // Initialisez
-            _projects = new List<ProjectModel>();
-            _selectedProject = new ProjectModel();
-            _etiquettes = new ObservableCollection<EtiquetteModel>();
-            _taches = new ObservableCollection<TacheModel>();
-            _selectedTache = new TacheModel();
+            _participants = [];
+            _projects = [];
+            _selectedProject = new();
+            _etiquettes = [];
+            _taches = [];
+            _selectedTache = new();
             _pseudo = "";
             Pseudo = pseudo;
-            _userDataTable = new UserDataTable();
+            _userDataTable = new();
             // Initialisez les données des projets, par exemple à partir d'une base de données
             Projects = _userDataTable.LoadProjectsFromDatabase(Pseudo);
 
@@ -144,7 +145,7 @@ namespace TaskMastery.ViewModel
             ShowTacheCommand = new RelayCommand(ShowTache);
 
             // Initialisez la liste des tâches
-            Taches = new ObservableCollection<TacheModel>();
+            Taches = [];
         }
         private void ShowProjectDetails(object parameter)
         {
@@ -158,7 +159,7 @@ namespace TaskMastery.ViewModel
         private List<ProjectModel> LoadProjectsFromDatabase(string pseudo)
         {
             // Retournez la liste des projets chargés
-            return new List<ProjectModel>(); 
+            return []; 
         }
         public void UpdateTable()
         {
@@ -178,31 +179,33 @@ namespace TaskMastery.ViewModel
             MessageBox.Show("Affichage de la tâche");
         }
         // Méthode pour gérer l'événement CollectionChanged
-        private void EtiquettesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void EtiquettesCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Remove)
+            if (e.Action == NotifyCollectionChangedAction.Remove && e.OldItems != null)
             {
                 // La méthode Remove a été utilisée pour supprimer un élément de la collection
                 // Obtenir les éléments supprimés de la collection :
                 foreach (EtiquetteModel item in e.OldItems)
                 {
                     // Donner l'id de l'élément à la méthode DeleteEtiquette de la classe dataAccess
-                    if (!_userDataTable.DeleteEtiquette(item.Id)){
+                    if (!_userDataTable.DeleteEtiquette(item.Id))
+                    {
                         // Remettre l'élément dans la collection si la suppression a échoué
                         Etiquettes.Add(item);
                     }
                 }
+            }
             // Méthode Add a été utilisée pour ajouter un élément à la collection
-            }else if (e.Action == NotifyCollectionChangedAction.Add)
+            else if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems != null)
             {
                 foreach (EtiquetteModel item in e.NewItems)
                 {
                     // Ajouter l'élément à la base de données
                     item.Id_User = _userDataTable.GetId(Pseudo);
-                    item.Id =  _userDataTable.InsertEtiquette(item.Designation, item.Id_User);
-
+                    item.Id = _userDataTable.InsertEtiquette(item.Designation, item.Id_User);
                 }
             }
         }
+
     }
 }

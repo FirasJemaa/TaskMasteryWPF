@@ -33,11 +33,11 @@ public class MainWindowViewModel : ViewModelBase
         ShowDashboardCommand = new RelayCommand(ShowDashboard);
         LogOutCommand = new RelayCommand(LogOut);
         // Par défaut, affichez un autre UserControl ici si nécessaire
-        CurrentUserControl = new DashboardUserControl(_pseudo);
+        _currentUserControl = new DashboardUserControl(_pseudo);
         // Affectez la valeur de _pseudo à la propriété Pseudo
         Pseudo = _pseudo;
         // Affectez la valeur de currentWindow à la propriété CurrentWindow
-        CurrentWindow = currentWindow;
+        CurrentWindow = currentWindow;        
     }
 
     private void ShowProfile(object parameter)
@@ -53,7 +53,7 @@ public class MainWindowViewModel : ViewModelBase
     private void LogOut(object parameter)
     {
         // Créez une instance de la fenêtre de connexion et affichez-la
-        LogView loginWindow = new LogView();
+        LogView loginWindow = new();
         loginWindow.Show();
         // Fermez la fenêtre actuelle
         CurrentWindow.Close();

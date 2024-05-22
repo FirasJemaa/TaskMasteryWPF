@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using System.Windows;
 using TaskMastery.DataAccess;
 
 namespace TaskMastery.Model
@@ -28,7 +27,7 @@ namespace TaskMastery.Model
             set
             {
                 _designation = value;
-                updateField();
+                UpdateField();
             }
         }
         private BigInteger _id_User;
@@ -43,7 +42,7 @@ namespace TaskMastery.Model
                 
             }
         }
-        UserDataTable dataAccess;
+        readonly UserDataTable dataAccess;
 
         public EtiquetteModel()
         {
@@ -63,7 +62,7 @@ namespace TaskMastery.Model
             dataAccess = new UserDataTable();
             this.id_userCurrent = _id_userCurrent;
         }
-        private void updateField()
+        private void UpdateField()
         {
             //Mise à jour de l'étiquette sinon création
             if (_id != 0)

@@ -16,7 +16,7 @@ namespace TaskMastery.Assets.Components
         {
             InitializeComponent();
             //utiliser UserViewModel pour afficher les informations de l'utilisateur grace à son pseudo
-            LogInUpViewModel _User = new LogInUpViewModel(pseudo, CurrentWindow);
+            LogInUpViewModel _User = new(pseudo, CurrentWindow);
             DataContext = _User;
         }
     }

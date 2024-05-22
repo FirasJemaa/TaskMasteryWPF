@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TaskMastery.Model
 {
-    internal class UserModel
+    public class UserModel
     {
         public BigInteger Id { get; set; }
         public string Name { get; set; }
@@ -24,7 +24,7 @@ namespace TaskMastery.Model
             Email = "";
             Password = "";
             Pseudo = "";
-            Projects = new List<ProjectModel>();
+            Projects = [];
         }
 
     }

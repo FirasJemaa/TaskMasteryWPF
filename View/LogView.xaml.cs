@@ -5,8 +5,8 @@ namespace TaskMastery.View
 {
     public partial class LogView : Window
     {
-        InscriptionUserControl _inscriptionUserControl;
-        ConnexionUserControl _connexionUserControl;
+        readonly InscriptionUserControl _inscriptionUserControl;
+        readonly ConnexionUserControl _connexionUserControl;
         public LogView()
         {
             InitializeComponent();

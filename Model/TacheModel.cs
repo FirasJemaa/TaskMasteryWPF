@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TaskMastery.Model
 {
-    internal class TacheModel
+    public class TacheModel
     {
         public int Id { get; set; }
         public string Titre { get; set; }

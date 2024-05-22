@@ -6,8 +6,8 @@ namespace TaskMastery.Assets.Components
 {
     public partial class DashboardUserControl : UserControl
     {
-        private DashboardViewModel dashboardViewModel;
-        private string pseudo;
+        private readonly DashboardViewModel dashboardViewModel;
+        private readonly string pseudo;
         public DashboardUserControl(string _pseudo)
         {
             pseudo = _pseudo;

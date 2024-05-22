@@ -13,8 +13,8 @@ namespace TaskMastery.ViewModel
     public class LogInUpViewModel : ViewModelBase
     {
         private readonly UserDataTable _userDataTable;
-        private readonly Window _LogWindow;
-        private readonly Window _CurrentWindow;
+        private readonly Window? _LogWindow;
+        private readonly Window? _CurrentWindow;
         private BigInteger _id;
         public BigInteger Id
         {
@@ -101,28 +101,53 @@ namespace TaskMastery.ViewModel
         public ICommand? UpdatePasswordCommand { get; }
         public ICommand? UpdateCommand { get; }
         public ICommand? DeleteCommand { get; }
-        string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d\s]).{8,}$";
+        readonly string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d\s]).{11,}$";
+        public LogInUpViewModel()
+        {
+            _surname = "";
+            _name = "";
+            _email = "";
+            _pseudo = "";
+            _password = "";
+            _confirmPassword = "";
+            _oldPassword = "";
+            _userDataTable = new UserDataTable();
+        }
         public LogInUpViewModel(Window logWindow)
         {
-            ConnexionCommand = new RelayCommand((param) => LogIn(param));
-            InscriptionCommand = new RelayCommand((param) => LogUp(param));
+            _surname = "";
+            _name = "";
+            _email = "";
+            _pseudo = "";
+            _password = "";
+            _confirmPassword = "";
+            _oldPassword = "";
+            ConnexionCommand = new RelayCommand((param) => LogIn());
+            InscriptionCommand = new RelayCommand((param) => LogUp());
             _userDataTable = new UserDataTable();
 
             Email = "soufiane@gmail.com";
             Password = "Soufiane2001!";
             _LogWindow = logWindow;
         }
-        public LogInUpViewModel(string _pseudo, Window currentWindow)
+        public LogInUpViewModel(string pseudo, Window currentWindow)
         {
+            _surname = "";
+            _name = "";
+            _email = "";
+            _pseudo = "";
+            _password = "";
+            _confirmPassword = "";
+            _oldPassword = "";
             UpdateCommand = new RelayCommand((param) => UpdateUser());
             DeleteCommand = new RelayCommand((param) => DeleteUser());
-            UpdatePasswordCommand = new RelayCommand((param) => UpdatePassUser(param));
+            UpdatePasswordCommand = new RelayCommand((param) => UpdatePassUser());
             _userDataTable = new UserDataTable();
-            getUser(false, _pseudo);
+            GetUser(false, pseudo);
             _CurrentWindow = currentWindow;
         }
 
-        private bool RegexPassword()
+        public bool RegexPassword()
         {
             //controle que le mot de passe fait plus de 8 caractères, Une majuscule, un chiffre et un caractère spécial
             if (!Regex.IsMatch(Password, passwordPattern))
@@ -137,12 +162,12 @@ namespace TaskMastery.ViewModel
             if (_userDataTable.DeleteUser(Email))
             {
                 MessageBox.Show("Utilisateur supprimé");
-                LogView _logInUpWindow = new LogView();
+                LogView _logInUpWindow = new();
                 _logInUpWindow.Show();
-                _CurrentWindow.Close();
+                _CurrentWindow?.Close();
             }
         }
-        private void LogUp(object param)
+        private void LogUp()
         {
             //Vérifier qu'il y a aucun champ vide sauf id
             if (string.IsNullOrEmpty(Surname) || string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Pseudo))
@@ -158,7 +183,7 @@ namespace TaskMastery.ViewModel
                     if (_userDataTable.CheckFieldsNotExists(Email, Pseudo, Id))
                     {
                         //créer un nouvel utilisateur
-                        UserModel _user = new UserModel
+                        UserModel _user = new()
                         {
                             Surname = Surname,
                             Name = Name,
@@ -167,8 +192,8 @@ namespace TaskMastery.ViewModel
                             Password = Password
                         };
                         _userDataTable.AddUser(_user);
-                        MainWindow _MainWindowView = new MainWindow(Pseudo);
-                        _LogWindow.Close();
+                        MainWindow _MainWindowView = new(Pseudo);
+                        _LogWindow?.Close();
                     }
                 }
                 else
@@ -177,18 +202,17 @@ namespace TaskMastery.ViewModel
                 }
             }
         }
-        private void LogIn(object param)
+        public void LogIn()
         {
             if (NotEmpty() || RegexPassword())
             {
                 //vérifier que l'email et le mot de passe sont corrects
                 if (_userDataTable.CheckUser(Email, Password))
                 {
-                    getUser(true, Email);
-                    MainWindow _MainWindowView = new MainWindow(Pseudo);
+                    GetUser(true, Email);
+                    MainWindow _MainWindowView = new(Pseudo);
                     _MainWindowView.Show();
-                    //fermer la view de connexion
-                    _LogWindow.Close();
+                    _LogWindow?.Close();
                 }
             }
         }
@@ -203,7 +227,7 @@ namespace TaskMastery.ViewModel
         }
         private void UpdateUser()
         {
-            UserModel _user = new UserModel
+            UserModel _user = new()
             {
                 Id = Id,
                 Surname = Surname,
@@ -216,16 +240,18 @@ namespace TaskMastery.ViewModel
                 MessageBox.Show("Utilisateur modifié");
             }
         }
-        private void getUser(bool bMail, string contenu)
+        private void GetUser(bool bMail, string contenu)
         {
-            UserModel _user = _userDataTable.GetUser(bMail, contenu);
-            Id = _user.Id;
-            Surname = _user.Surname;
-            Name = _user.Name;
-            Pseudo = _user.Pseudo;
-            Email = _user.Email;
+            UserModel? _user = _userDataTable.GetUser(bMail, contenu);
+            if (_user != null) { 
+                Id = _user.Id;
+                Surname = _user.Surname;
+                Name = _user.Name;
+                Pseudo = _user.Pseudo;
+                Email = _user.Email;
+            }
         }
-        private void UpdatePassUser(object param)
+        private void UpdatePassUser()
         {
             //Vérifier que l'aien mot de passe est correct
             if (_userDataTable.CheckUser(Email, OldPassword))
@@ -234,11 +260,6 @@ namespace TaskMastery.ViewModel
                 {
                     if (Password == ConfirmPassword)
                     {
-                        UserModel _user = new UserModel
-                        {
-                            Id = Id,
-                            Password = Password
-                        };
                         if (_userDataTable.UpdatePassword(Id,Password))
                         {
                             MessageBox.Show("Mot de passe modifié");

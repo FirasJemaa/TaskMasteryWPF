@@ -16,10 +16,5 @@ namespace TaskMastery.Assets.Components
             InitializeComponent();
             DataContext = new LogInUpViewModel(parentWindow);
         }
-
-        private void SAI_Password_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            
-        }
     }
 }

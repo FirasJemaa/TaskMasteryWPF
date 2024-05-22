@@ -1,26 +1,25 @@
 ﻿using MySql.Data.MySqlClient;
-using Mysqlx.Crud;
 using System.Collections.ObjectModel;
 using System.Numerics;
 using System.Windows;
-using System.Xml.Linq;
 using TaskMastery.Model;
 
 namespace TaskMastery.DataAccess
 {
     //cette class va perme de faire les requetes SQL sur la table user
-    class UserDataTable
+    public class UserDataTable
     {
         //string de connexion à la base de données
         const string _dsn = "Server=localhost;Database=taskmastery;username=root;password=;";
         //MySqlConnection permet de se connecter à une base de données MySQL
-        readonly MySqlConnection _connection = new MySqlConnection(_dsn);
+        private readonly MySqlConnection _connection;
         //MySqlCommand permet d'exécuter des commandes SQL
-        private MySqlCommand? _command;
+        private MySqlCommand _command;
         //cette methode permet de verifier si l'utilisateur existe dans la base de données
         public UserDataTable()
         {
-
+            _command = new();
+            _connection = new(_dsn);
         }
         public bool UserExistBeforeToDelete(string email, string password)
         {
@@ -225,20 +224,32 @@ namespace TaskMastery.DataAccess
                 if (reader.HasRows)
                 {
                     // On lit la première ligne
-                    reader.Read();
-                    //créé un objet User avec les données de la ligne
-                    UserModel user = new UserModel();
-                    user.Id = int.Parse(reader["id"].ToString());
-                    user.Name = reader["name"].ToString();
-                    user.Surname = reader["surname"].ToString();
-                    user.Pseudo = reader["pseudo"].ToString();
-                    user.Email = reader["email"].ToString();
-                    user.Password = reader["password"].ToString();
+                    if (reader.Read())
+                    {
 
-                    // On ajoute l'objet User à la liste
+                        //créé un objet User avec les données de la ligne
+                        UserModel user = new()
+                        {
+                            Id = reader.GetInt64(reader.GetOrdinal("id")),
+                            Name = reader.GetString(reader.GetOrdinal("name")).ToString(),
+                            Surname = reader.GetString(reader.GetOrdinal("surname")).ToString(),
+                            Pseudo = reader.GetString(reader.GetOrdinal("pseudo")).ToString(),
+                            Email = reader.GetString(reader.GetOrdinal("email")).ToString(),
+                            Password = reader.GetString(reader.GetOrdinal("password")).ToString()
+                        };
 
-                    // On retourne la liste
-                    return user;
+                        // On ajoute l'objet User à la liste
+
+                        // On retourne la liste
+                        return user;
+
+                    }
+                    else
+                    {
+                        return null;
+                    }
+
+
                 }
                 else
                 {
@@ -306,13 +317,15 @@ namespace TaskMastery.DataAccess
                 //on execute la requete
                 MySqlDataReader reader = _command.ExecuteReader();
                 //on crée une liste de projets
-                List<ProjectModel> projects = new List<ProjectModel>();
+                List<ProjectModel> projects = [];
                 //on lit les données
                 while (reader.Read())
                 {
-                    ProjectModel project = new ProjectModel();
-                    project.Id = int.Parse(reader["id"].ToString());
-                    project.Projet = reader["designation"].ToString();
+                    ProjectModel project = new()
+                    {
+                        Id = reader.GetInt64(reader.GetOrdinal("id")),
+                        Projet = reader.GetString(reader.GetOrdinal("designation")).ToString()
+                    };
                     projects.Add(project);
                 }
                 return projects;
@@ -320,7 +333,7 @@ namespace TaskMastery.DataAccess
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
-                return new List<ProjectModel>();
+                return [];
             }
             finally
             {
@@ -343,14 +356,16 @@ namespace TaskMastery.DataAccess
                 //on execute la requete
                 MySqlDataReader reader = _command.ExecuteReader();
                 //on crée une liste d'étiquettes
-                ObservableCollection<EtiquetteModel> etiquettes = new ObservableCollection<EtiquetteModel>();
+                ObservableCollection<EtiquetteModel> etiquettes = [];
                 //on lit les données
                 while (reader.Read())
                 {
-                    EtiquetteModel etiquette = new EtiquetteModel(Int64.Parse(reader["idUser"].ToString()));
-                    etiquette.Id = int.Parse(reader["id"].ToString());
-                    etiquette.Designation = reader["designation"].ToString();
-                    etiquette.Id_User = Int64.Parse(reader["id_user"].ToString());
+                    EtiquetteModel etiquette = new(reader.GetInt64(reader.GetOrdinal("idUser")))
+                    {
+                        Id = reader.GetInt64(reader.GetOrdinal("id")),
+                        Designation = reader.GetString(reader.GetOrdinal("designation")).ToString(),
+                        Id_User = reader.GetInt64(reader.GetOrdinal("id_user"))
+                    };
                     etiquettes.Add(etiquette);
                 }
                 return etiquettes;
@@ -358,7 +373,7 @@ namespace TaskMastery.DataAccess
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
-                return new ObservableCollection<EtiquetteModel>();
+                return [];
             }
             finally
             {
@@ -388,16 +403,18 @@ namespace TaskMastery.DataAccess
                 //on execute la requete
                 MySqlDataReader reader = _command.ExecuteReader();
                 //on crée une liste de tâches
-                ObservableCollection<TacheModel> taches = new ObservableCollection<TacheModel>();
+                ObservableCollection<TacheModel> taches = [];
                 //on lit les données
                 while (reader.Read())
                 {
-                    TacheModel tache = new TacheModel();
-                    tache.Id = int.Parse(reader["id"].ToString());
-                    tache.Titre = reader["T_designation"].ToString();
-                    tache.Statut = reader["S_designation"].ToString();
-                    tache.Etiquette = reader["E_designation"].ToString();
-                    tache.NombreParticipants = int.Parse(reader["NbrParticipant"].ToString());
+                    TacheModel tache = new()
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("id")),
+                        Titre = reader.GetString(reader.GetOrdinal("T_designation")).ToString(),
+                        Statut = reader.GetString(reader.GetOrdinal("S_designation")).ToString(),
+                        Etiquette = reader.GetString(reader.GetOrdinal("E_designation")).ToString(),
+                        NombreParticipants = reader.GetInt32(reader.GetOrdinal("NbrParticipant"))
+                    };
                     if (reader["TotalResultChecked"] == DBNull.Value)
                     {
                         tache.Cheklist = "0/0";
@@ -413,7 +430,7 @@ namespace TaskMastery.DataAccess
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
-                return new ObservableCollection<TacheModel>();
+                return [];
             }
             finally
             {
@@ -444,13 +461,15 @@ namespace TaskMastery.DataAccess
                 //on lit les données
                 if (reader.Read())
                 {
-                    UserModel user = new UserModel();
-                    user.Id = Int64.Parse(reader["id"].ToString());
-                    user.Name = reader["name"].ToString();
-                    user.Surname = reader["surname"].ToString();
-                    user.Email = reader["email"].ToString();
-                    user.Pseudo = reader["pseudo"].ToString();
-                    user.Password = reader["password"].ToString();
+                    UserModel user = new()
+                    {
+                        Id = reader.GetInt64(reader.GetOrdinal("id")),
+                        Name = reader.GetString(reader.GetOrdinal("name")),
+                        Surname = reader.GetString(reader.GetOrdinal("surname")),
+                        Email = reader.GetString(reader.GetOrdinal("email")),
+                        Pseudo = reader.GetString(reader.GetOrdinal("pseudo")),
+                        Password = reader.GetString(reader.GetOrdinal("password")),
+                    };
                     return user;
                 }
                 else
@@ -506,7 +525,7 @@ namespace TaskMastery.DataAccess
                 //on retourne si le mail existe ou non
                 if (reader.Read())
                 {
-                    return Int64.Parse(reader["id"].ToString());
+                    return reader.GetInt64(reader.GetOrdinal("id"));
                 }
                 return 0;
             }
@@ -613,15 +632,17 @@ namespace TaskMastery.DataAccess
                 //on execute la requete
                 MySqlDataReader reader = _command.ExecuteReader();
                 //on crée une liste de tâches
-                ObservableCollection<ParticipantModel> participants = new ObservableCollection<ParticipantModel>();
+                ObservableCollection<ParticipantModel> participants = [];
                 //on lit les données
                 while (reader.Read())
                 {
-                    ParticipantModel participant = new ParticipantModel();
-                    participant.Id = Int64.Parse(reader["id"].ToString());
-                    participant.Pseudo = reader["pseudo"].ToString();
-                    participant.Nom = reader["name"].ToString();
-                    participant.Prenom = reader["surname"].ToString();
+                    ParticipantModel participant = new()
+                    {
+                        Id = reader.GetInt64(reader.GetOrdinal("id")),
+                        Pseudo = reader.GetString(reader.GetOrdinal("pseudo")),
+                        Nom = reader.GetString(reader.GetOrdinal("name")),
+                        Prenom = reader.GetString(reader.GetOrdinal("surname"))
+                    };
                     participants.Add(participant);
                 }
                 return participants;
@@ -629,13 +650,12 @@ namespace TaskMastery.DataAccess
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
-                return new ObservableCollection<ParticipantModel>();
+                return [];
             }
             finally
             {
                 _connection.Close();
             }
         }
-
     }
 }

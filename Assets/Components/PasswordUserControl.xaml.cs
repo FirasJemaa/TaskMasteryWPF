@@ -56,7 +56,7 @@ namespace TaskMastery.Assets.Components
                 point++;
             }
 
-            if (Regex.IsMatch(PasswordBox.Password, @"[0-9]"))
+            if (Regex.IsMatch(PasswordBox.Password, @"[0-11]"))
             {
                 point++;
             }
@@ -86,26 +86,26 @@ namespace TaskMastery.Assets.Components
         }
         private void Transition(Brush couleurDepart, Color couleurFinal)
         {
-            SolidColorBrush couleurDeDepart = couleurDepart as SolidColorBrush;
-
-            if (couleurDeDepart != null)
+            if (couleurDepart is SolidColorBrush couleurDeDepart)
             {
                 // Créer une nouvelle instance de SolidColorBrush avec la couleur finale
-                SolidColorBrush nouvelleCouleur = new SolidColorBrush(couleurFinal);
+                SolidColorBrush nouvelleCouleur = new(couleurFinal);
 
                 // Créer une animation de transition de la couleur de la bordure
-                ColorAnimation animation = new ColorAnimation();
-                animation.From = couleurDeDepart.Color; // Couleur de départ
-                animation.To = couleurFinal; // Couleur finale
-                animation.Duration = new Duration(TimeSpan.FromSeconds(0.5)); // Durée de l'animation (0.5 seconde)
-                animation.EasingFunction = new System.Windows.Media.Animation.CubicEase() { EasingMode = System.Windows.Media.Animation.EasingMode.EaseInOut }; // Transition ease in out
+                ColorAnimation animation = new()
+                {
+                    From = couleurDeDepart.Color, // Couleur de départ
+                    To = couleurFinal, // Couleur finale
+                    Duration = new Duration(TimeSpan.FromSeconds(0.5)), // Durée de l'animation (0.5 seconde)
+                    EasingFunction = new System.Windows.Media.Animation.CubicEase() { EasingMode = System.Windows.Media.Animation.EasingMode.EaseInOut } // Transition ease in out
+                };
 
                 // Définir la cible de l'animation sur la nouvelle couleur
                 Storyboard.SetTarget(animation, nouvelleCouleur);
                 Storyboard.SetTargetProperty(animation, new PropertyPath(SolidColorBrush.ColorProperty)); // Animation de la propriété Color
 
                 // Créer et démarrer le storyboard de l'animation
-                Storyboard story = new Storyboard();
+                Storyboard story = new();
                 story.Children.Add(animation);
                 story.Begin();
 

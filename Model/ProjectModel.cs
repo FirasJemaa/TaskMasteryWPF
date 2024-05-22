@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TaskMastery.Model
 {
-    internal class ProjectModel
+    public class ProjectModel
     {
         public BigInteger Id { get; set; }
         public BigInteger IdUser { get; set; }
