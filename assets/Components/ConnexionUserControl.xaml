@@ -24,6 +24,7 @@
             HorizontalAlignment="Center" 
             Margin="0,74,0,99" 
             Command="{Binding ConnexionCommand}"  
+            IsDefault="True"
             Width="86" />
         <StackPanel Margin="100,34,13,144" Width="187">
             <local:PasswordUserControl Password="{Binding Password, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="187" />

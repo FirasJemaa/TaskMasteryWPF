@@ -125,9 +125,6 @@ namespace TaskMastery.ViewModel
             ConnexionCommand = new RelayCommand((param) => LogIn());
             InscriptionCommand = new RelayCommand((param) => LogUp());
             _userDataTable = new UserDataTable();
-
-            Email = "soufiane@gmail.com";
-            Password = "Soufiane2001!";
             _LogWindow = logWindow;
         }
         public LogInUpViewModel(string pseudo, Window currentWindow)
@@ -193,6 +190,7 @@ namespace TaskMastery.ViewModel
                         };
                         _userDataTable.AddUser(_user);
                         MainWindow _MainWindowView = new(Pseudo);
+                        _MainWindowView.Show();
                         _LogWindow?.Close();
                     }
                 }
